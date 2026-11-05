@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>방사성물질 유출 대응 길잡이</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1d5bd6;--ink:#1b232b;--sub:#66727d;--line:#e2e6ea;--bg:#f1f3f5;--red:#d32f2f;--red-s:#fdecec;--green:#18804a;--green-s:#e7f6ee;--amber:#9a5b00;--amber-s:#fff4dc;--purple:#5b3fb5;--purple-s:#efeafd}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"Noto Sans KR",system-ui,sans-serif;background:#cfd4d9;color:var(--ink);font-size:16px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.phone{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:130px}
+.view{display:none}.view.on{display:block}
+.hd{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);height:54px;display:flex;align-items:center;gap:6px;padding:0 10px}
+.hd .bk{width:38px;height:38px;font-size:26px;display:grid;place-items:center}
+.hd b{font-size:16px}
+/* 홈 */
+.hero{background:var(--blue);color:#fff;padding:26px 20px 30px}
+.hero small{opacity:.85;font-size:13px}
+.hero h1{margin:4px 0 0;font-size:24px;font-weight:900}
+.go{display:block;width:calc(100% - 32px);margin:-18px 16px 0;background:var(--red);color:#fff;border-radius:16px;padding:22px 20px;text-align:left;box-shadow:0 4px 14px rgba(211,47,47,.3)}
+.go b{display:block;font-size:22px;font-weight:900}
+.go span{font-size:14px;opacity:.9}
+.warn{display:block;width:calc(100% - 32px);margin:14px 16px 0;background:var(--amber-s);color:var(--amber);border:1px solid #f0d9a8;border-radius:12px;padding:12px 14px;text-align:left;font-weight:700;font-size:14px}
+.sec-t{font-size:14px;font-weight:700;color:var(--sub);margin:24px 18px 8px}
+.menu{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 16px}
+.menu button{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 6px;font-size:14px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px}
+.menu button i{font-style:normal;font-size:24px}
+.foot{font-size:12px;color:var(--sub);text-align:center;margin:22px 16px}
+.foot button{text-decoration:underline;color:var(--sub);font-size:12px}
+/* 질문 */
+.prog{height:6px;background:var(--line)}
+.prog div{height:100%;background:var(--blue);transition:width .2s}
+.qwrap{padding:22px 18px}
+.qn{font-size:13px;font-weight:700;color:var(--blue)}
+.qt{font-size:23px;font-weight:900;margin:4px 0 6px;line-height:1.35}
+.qh{color:var(--sub);font-size:14px;margin:0 0 16px}
+.opts{display:grid;gap:10px}
+.opt{width:100%;min-height:62px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 16px;text-align:left;display:flex;align-items:center;gap:12px;font-size:17px;font-weight:700}
+.opt small{display:block;font-size:13px;color:var(--sub);font-weight:500}
+.opt i{font-style:normal;font-size:24px;flex:none}
+.opt.on{border-color:var(--blue);background:#eaf1ff}
+.opt.danger{border-color:var(--red)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2 .opt{min-height:70px;flex-direction:column;align-items:flex-start;gap:0;font-size:18px}
+.next{width:100%;min-height:56px;border-radius:14px;background:var(--blue);color:#fff;font-size:17px;font-weight:700;margin-top:16px}
+.next:disabled{background:#a9b3bd}
+.grp{font-size:14px;font-weight:700;color:var(--sub);margin:18px 0 8px}
+/* 결과 */
+.verdict{padding:18px;color:#fff}
+.verdict.major{background:var(--red)}.verdict.minor{background:var(--green)}.verdict.sealed{background:var(--purple)}
+.verdict small{font-size:13px;opacity:.9}
+.verdict h2{margin:2px 0 6px;font-size:23px;font-weight:900}
+.verdict ul{margin:0;padding-left:18px;font-size:14px;opacity:.95}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tags span{background:rgba(255,255,255,.2);border-radius:999px;padding:2px 10px;font-size:13px}
+.stick{position:sticky;top:54px;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:9px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.stick .tr{flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.stick .fl{height:100%;background:var(--green)}
+.blk{background:#fff;margin:10px;border-radius:14px;border:1px solid var(--line);padding:14px}
+.blk h3{margin:0 0 10px;font-size:17px;display:flex;align-items:center;gap:8px}
+.blk h3 .lab{font-size:12px;color:#fff;border-radius:5px;padding:1px 7px;font-weight:700}
+ol.st{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+ol.st li{display:flex;gap:10px;align-items:flex-start;padding:11px;border-radius:10px;background:#f6f8fa;cursor:pointer;user-select:none}
+ol.st li .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center}
+ol.st li b{display:block;font-size:16px;font-weight:700}
+ol.st li span.d{display:block;color:var(--sub);font-size:14px;margin-top:1px}
+ol.st li.done{background:var(--green-s)}
+ol.st li.done .n{background:var(--green)}
+ol.st li.done b{text-decoration:line-through;color:var(--sub)}
+.nuc{border:2px solid var(--purple);background:var(--purple-s)}
+.nuc .facts{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin:0 0 10px;background:#fff;border-radius:10px;padding:10px}
+.nuc .facts dt{color:var(--sub);font-weight:700}.nuc .facts dd{margin:0}
+ul.dn{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+ul.dn li{display:flex;gap:10px;padding:10px;border-radius:10px;background:var(--red-s)}
+ul.dn li::before{content:"✕";flex:none;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-weight:900;font-size:13px;display:grid;place-items:center}
+ul.dn b{display:block;font-size:15.5px}
+ul.dn span{display:block;color:#7b3b3b;font-size:13.5px}
+ul.rp{margin:0;padding-left:20px}
+ul.rp li{padding:3px 0}
+.again{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 10px}
+.mdl .bt3{display:grid;gap:8px}.mdl .bt3 button,.mdl .bt3 a{min-height:50px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
+.mdl .bt3 .pri{background:var(--red);color:#fff;border-color:var(--red)}
+.rbtn{flex:none;align-self:center;margin-left:auto;border:0;border-radius:9px;background:var(--red);color:#fff;font-weight:700;font-size:13.5px;padding:8px 11px}
+
+.mdl textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:14px;margin:0 0 6px;box-sizing:border-box}
+.mdl .note{font-size:13px;color:var(--sub);margin:-6px 0 12px}
+.rpt{display:block;width:calc(100% - 20px);margin:14px 10px 0;min-height:52px;border-radius:12px;background:var(--ink);color:#fff;font-weight:700;font-size:16px;border:0}
+ol.st li .tm{display:none;width:max-content;font-size:13px;font-weight:700;color:#fff;background:var(--red);border-radius:6px;padding:2px 9px;margin-top:6px}
+ol.st li.done .tm{display:block}
+.mdl{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mdl.on{display:flex}
+.mdl .box{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto}
+.mdl h3{margin:0 0 10px;font-size:19px}
+.mdl ul{margin:0 0 14px;padding-left:20px}.mdl li{padding:3px 0;font-weight:700}
+.mdl pre{white-space:pre-wrap;background:#f6f8fa;border-radius:10px;padding:12px;font-family:inherit;font-size:14px;line-height:1.55;margin:0 0 14px}
+.mdl .bt{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mdl .bt button{min-height:50px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:15px}
+.mdl .bt button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+.again button{min-height:50px;border-radius:12px;background:#fff;border:1px solid var(--line);font-weight:700}
+
+/* ===== 휴대폰 홈 화면 / 스플래시 / 메시지 (시연용) ===== */
+.ov{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100;overflow:hidden}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 0;font-size:13.5px;font-weight:700}
+#launcher{background:linear-gradient(160deg,#3a4f7a 0%,#6f86b8 45%,#c9a7c7 100%);color:#fff;display:flex;flex-direction:column}
+#launcher .clk{text-align:center;margin-top:44px}
+#launcher .clk b{display:block;font-size:64px;font-weight:300;line-height:1}
+#launcher .clk span{font-size:16px;opacity:.9}
+#launcher .mid{flex:1;display:grid;place-items:center}
+.ic{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.ic i{width:58px;height:58px;border-radius:19px;display:grid;place-items:center;font-size:28px;font-style:normal;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.ic.me i{width:76px;height:76px;border-radius:24px;background:var(--blue);font-size:40px;color:#fff;animation:pulse 1.8s ease-in-out infinite}
+.ic.me{font-size:14px;font-weight:700}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.55)}50%{box-shadow:0 0 0 12px rgba(255,255,255,0)}}
+#launcher .grid{display:flex;justify-content:center;gap:44px;padding:0 14px 22px}
+#launcher .dock{display:grid;grid-template-columns:repeat(2,1fr);margin:0 12px 22px;padding:12px 0;border-radius:26px;background:rgba(255,255,255,.22)}
+#launcher .dock .ic span{display:none}
+#splash{background:var(--blue);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .45s}
+#splash.on{display:flex}
+#splash i{width:96px;height:96px;border-radius:30px;background:#fff;color:var(--blue);display:grid;place-items:center;font-size:54px;font-style:normal;animation:pop .6s ease-out}
+#splash b{font-size:22px;font-weight:900;text-align:center;line-height:1.3}
+#splash small{opacity:.8}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+#msgs{background:#fff;display:none;flex-direction:column;z-index:120;color:#111}
+#msgs.on{display:flex}
+#msgs .mh{display:flex;align-items:center;gap:10px;padding:8px 10px 10px;border-bottom:1px solid #eee}
+#msgs .mh .bk{font-size:28px;width:38px;height:38px;display:grid;place-items:center}
+#msgs .av{width:40px;height:40px;border-radius:50%;background:#8fb3e8;color:#fff;display:grid;place-items:center;font-weight:700}
+#msgs .mh b{display:block;font-size:17px}#msgs .mh small{color:#777}
+#msgs .demo{text-align:center;font-size:12px;color:#888;background:#f4f4f4;padding:5px}
+#msgs .mb{flex:1;overflow:auto;padding:14px 12px;background:#fff}
+#msgs .dt{text-align:center;font-size:12.5px;color:#888;margin:4px 0 14px}
+#msgs .bub{margin-left:auto;width:fit-content;max-width:82%;background:#d9e8ff;border-radius:20px 20px 6px 20px;padding:11px 14px;white-space:pre-wrap;font-size:14.5px;line-height:1.5;animation:pop .35s ease-out}
+#msgs .st{text-align:right;font-size:12px;color:#888;margin-top:5px}
+#msgs .ib{display:flex;align-items:center;gap:8px;padding:10px 12px calc(12px + env(safe-area-inset-bottom));border-top:1px solid #eee}
+#msgs .ib .pl{width:36px;height:36px;border-radius:50%;background:#f0f0f0;display:grid;place-items:center;font-size:20px;color:#666}
+#msgs .ib .in{flex:1;background:#f3f3f3;border-radius:20px;padding:9px 14px;color:#999;font-size:14.5px}
+#msgs .ib .sd{width:36px;height:36px;border-radius:50%;background:#e8e8e8;display:grid;place-items:center;color:#aaa}
+
+.navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:46px;z-index:200;background:#fafafa;border-top:1px solid #e6e6e6;display:grid;grid-template-columns:repeat(3,1fr);align-items:center}
+.navbar button{height:46px;display:grid;place-items:center;color:#555}
+.navbar.dk{background:rgba(0,0,0,.12);border-color:transparent}.navbar.dk button{color:#fff}
+.callbar{bottom:46px!important}
+.mdl{bottom:46px!important}
+.ov{bottom:46px!important}
+#launcher,#splash{bottom:0!important;padding-bottom:46px}
+#msgs .ib input{flex:1;background:#f3f3f3;border:0;border-radius:20px;padding:9px 14px;font:inherit;font-size:14.5px;outline:none;min-width:0}
+#msgs .ib .sd.on{background:#3d8bfd;color:#fff}
+#msgs .bub+.st+.bub{margin-top:10px}
+
+button.ic{background:none;border:0;padding:0;color:#fff;font:inherit;font-size:12.5px}
+.pa{background:#fff;color:#111;display:none;flex-direction:column;z-index:110}
+.pa.on{display:flex}
+.pa .pt{font-size:30px;font-weight:700;padding:46px 20px 18px}
+.mli{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 20px;border-bottom:1px solid #f1f1f1}
+.mli .av{width:46px;height:46px;border-radius:50%;background:#8fb3e8;color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.mli b{display:block;font-size:16px}.mli small{display:block;color:#777;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.mli .tt{margin-left:auto;align-self:flex-start;color:#999;font-size:12.5px;padding-top:4px}
+.mempty{color:#999;text-align:center;padding:40px 0}
+.hic{width:40px;height:40px;display:grid;place-items:center;color:#222}
+#msgs{z-index:115}
+.dd{text-align:center;padding:60px 20px 6px;min-height:150px}
+.dd #dNum{font-size:34px;letter-spacing:1px;min-height:48px}
+.dd small{color:#3d8bfd;font-size:15px;min-height:22px;display:block}
+.dsug{display:block;margin:0 auto 10px;padding:7px 16px;border-radius:999px;background:#eef4ff;color:#2a62c9;font-size:14px;font-weight:700}
+.dsug:empty{display:none}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 0;padding:0 34px}
+.kp button{height:66px;border-radius:33px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;line-height:1}
+.kp button small{font-size:11px;color:#888;letter-spacing:1px;margin-top:3px;min-height:12px}
+.kp button:active{background:#f0f0f0}
+.kr{display:grid;grid-template-columns:repeat(3,1fr);align-items:center;padding:14px 34px 20px;justify-items:center}
+.callb{width:68px;height:68px;border-radius:50%;background:#3fbf6a;display:grid;place-items:center}
+.del{font-size:26px;color:#666;width:56px;height:56px}
+#call{background:linear-gradient(180deg,#2c3e50,#1b2631);color:#fff;display:none;flex-direction:column;align-items:center;z-index:130}
+#call.on{display:flex}
+#call .sb{width:100%}
+.cn{text-align:center;margin-top:70px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cav{width:92px;height:92px;border-radius:50%;background:#8fb3e8;display:grid;place-items:center;font-size:36px;font-weight:700;margin-bottom:10px}
+.cn b{font-size:28px}.cn small{opacity:.75;font-size:16px}.cn span{margin-top:10px;opacity:.9}
+.cg{display:grid;grid-template-columns:repeat(3,90px);gap:10px;margin-top:auto;text-align:center;font-size:13px;opacity:.85}
+.cg i{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 6px;border-radius:50%;background:rgba(255,255,255,.12);font-style:normal;font-size:24px}
+.endb{width:72px;height:72px;border-radius:50%;background:#e53935;display:grid;place-items:center;margin:34px 0 14px}
+.cdemo{font-size:12px;opacity:.6;margin:0 0 14px}
+
+.calh{display:flex;align-items:center;justify-content:space-between;padding:30px 18px 10px}
+.calh b{font-size:24px}.calh button{font-size:30px;width:44px;height:44px;color:#444}
+.calw,.calg{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;padding:0 8px}
+.calw{font-size:13px;color:#777;padding-bottom:6px;border-bottom:1px solid #eee}
+.calg div{height:58px;padding-top:8px;font-size:16px}
+.calg .sun{color:#e53935}.calg .sat{color:#1e66d0}
+.calg .td span{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#3d8bfd;color:#fff;font-weight:700}
+.caltoday{margin:auto 16px 20px;background:#f4f6fa;border-radius:16px;padding:14px 16px}
+.caltoday b{display:block;font-size:17px}.caltoday small{color:#666}
+.galg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 3px;overflow:auto}
+.galg img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.galempty{grid-column:1/-1;color:#999;text-align:center;padding:40px 0}
+.galadd{margin:auto 16px 20px;min-height:50px;border-radius:14px;background:#f0f2f5;font-weight:700}
+#camApp{background:#000;display:none;flex-direction:column;z-index:125}
+#camApp.on{display:flex}
+#camV{flex:1;width:100%;object-fit:cover;min-height:0}
+.camfb{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:20px}
+.camfb.on{display:flex}.camfb button{background:#fff;color:#111;border-radius:999px;padding:12px 22px;font-weight:700}
+.camb{display:flex;align-items:center;justify-content:space-between;padding:18px 34px 22px;background:#000}
+.shut{width:72px;height:72px;border-radius:50%;background:#fff;border:5px solid #888}
+.camthumb{width:52px;height:52px;border-radius:12px;background:#333 center/cover}
+.camflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+#photoV{background:#000;display:none;align-items:center;justify-content:center;z-index:140}
+#photoV.on{display:flex}#photoV img{max-width:100%;max-height:100%}
+.phdel{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(255,255,255,.15);border-radius:999px;padding:10px 22px;font-weight:700}
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 0 12px}.pick img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer}
+#msgs .mimg{margin-left:auto;display:block;width:62%;border-radius:16px;animation:pop .35s ease-out}
+.phx{position:absolute;top:16px;right:16px;color:#fff;font-size:24px;width:44px;height:44px}
+
+/* 홈 화면: 화면 높이에 맞춰 고르게 배치 */
+#v-home.on{display:flex;flex-direction:column;min-height:calc(100vh - 130px);min-height:calc(100dvh - 130px)}
+#v-home .hero{padding:clamp(26px,7vh,72px) 20px clamp(30px,6vh,64px)}
+#v-home .hero h1{font-size:clamp(24px,3.6vh,32px)}
+#v-home .go{padding:clamp(22px,4vh,40px) 20px}
+#v-home .go b{font-size:clamp(22px,3.2vh,28px)}
+#v-home .sec-t{margin-top:auto;padding-top:clamp(18px,3vh,32px)}
+#v-home .menu button{word-break:keep-all}
+#v-home .menu button{padding:clamp(14px,3.6vh,36px) 6px;font-size:clamp(14px,1.9vh,16px)}
+#v-home .menu button i{font-size:clamp(24px,3.6vh,34px)}
+#v-home .menu button i svg{width:clamp(26px,3.6vh,34px);height:clamp(26px,3.6vh,34px)}
+#v-home .foot{margin-top:auto;padding-top:18px}
+.tipb{border-color:#f0d9a8;background:var(--amber-s)}.tipb b{display:block;font-size:16px}.tipb p{margin:4px 0 0;font-size:14.5px;color:#5c4a1e}
+details.fig{margin-top:6px}details.fig summary{display:inline-block;font-size:13.5px;font-weight:700;color:var(--blue);cursor:pointer;list-style:none}
+details.fig summary::-webkit-details-marker{display:none}details.fig summary::before{content:"▸ "}details.fig[open] summary::before{content:"▾ "}
+.mixb{border-style:dashed!important}
+.mxback{display:block;margin:10px auto 0;color:var(--sub);font-size:14px;text-decoration:underline}
+.cnts{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 10px;font-weight:700;font-size:14.5px}
+.cnts input{width:56px;margin:0 4px;padding:7px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;text-align:center}
+.tg{display:inline-block;font-size:12.5px;font-weight:700;color:#fff;background:#0b6e8a;border-radius:6px;padding:2px 9px;margin-bottom:4px}
+ol.st li.done .tg{background:#0b6e8a;color:#fff}
+body.home .view,body.home .callbar{visibility:hidden}
+body.home{overflow:hidden}
+/* 하단 고정 */
+.callbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1.4fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));z-index:20}
+.callbar a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:12px;font-weight:900;text-decoration:none;font-size:16px}
+.callbar .c119{background:var(--red);color:#fff}
+.callbar .crso{background:var(--ink);color:#fff;flex-direction:column;gap:0;line-height:1.2}
+.callbar .crso small{font-weight:500;font-size:12px;opacity:.85}
+/* 학습 */
+.card{background:#fff;margin:10px;border-radius:14px;border:1px solid var(--line);padding:14px}
+.card h3{margin:0 0 2px;font-size:18px}
+.card .ko{color:var(--sub);font-size:14px;margin-bottom:8px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin:0}
+.card dt{color:var(--sub);font-weight:700}.card dd{margin:0}
+.card ul{margin:8px 0 0;padding-left:18px;font-size:14px}
+.chips{display:flex;gap:6px;margin:12px 10px 0}
+.chips button{flex:1;min-height:42px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:14px}
+.chips button.on{border-color:var(--blue);background:var(--blue);color:#fff}
+details.faq{background:#fff;margin:8px 10px;border-radius:12px;border:1px solid var(--line)}
+details.faq summary{list-style:none;padding:14px;font-weight:700;cursor:pointer;display:flex;gap:8px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary b{color:var(--blue)}
+details.faq ol{margin:0;padding:0 14px 14px 34px}
+details.faq li{padding:2px 0}
+details.faq ol.st{padding:0}
+details.faq ol.st li{padding:11px}
+.field{margin:10px}
+.field label{display:block;font-weight:700;font-size:14px;margin-bottom:4px}
+.field input{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;min-height:50px}
+.ok{display:block;color:var(--green);font-weight:700;margin-top:8px}.ok.err{color:var(--red)}
+.delnum{display:block;width:100%;min-height:48px;margin-top:8px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--red);font-weight:700}
+.src li{margin-bottom:8px;font-size:14px;word-break:break-all}
+.src a{color:var(--blue)}
+</style>
+</head>
+<body class="home">
+<div class="phone">
+
+<!-- 홈 -->
+<section class="view on" id="v-home">
+  <div class="hero"><small>병원 핵의학과 · 연구실(방사성동위원소)</small><h1>방사성물질 유출<br>대응 길잡이</h1></div>
+  <button class="go" data-go="quiz"><b>🚨 지금 유출됐어요</b><span>첫 조치 → 내 상황 확인 → 빠진 것 점검</span></button>
+  <button class="warn" id="rsoWarn" data-go="set">⚠ 방사선안전관리자 번호가 없어요. 사고 전에 꼭 설정하세요 ›</button>
+  <div class="sec-t">평소에 익혀 두기</div>
+  <div class="menu">
+    <button data-go="nuc"><i>⚛️</i>핵종별 특징</button>
+    <button data-go="faq"><i>❓</i>자주 묻는 질문</button>
+    <button data-go="set"><i><svg width="26" height="26" viewBox="0 0 24 24" fill="var(--blue)" aria-hidden="true" style="flex:none"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg></i>연락처 설정</button>
+  </div>
+  <p class="foot"><button data-go="src">근거 자료</button></p>
+</section>
+
+<!-- 질문 -->
+<section class="view" id="v-quiz">
+  <div class="hd"><button class="bk" id="qBack" aria-label="이전">‹</button><b>상황 진단</b></div>
+  <div class="prog"><div id="qProg"></div></div>
+  <div class="qwrap" id="qBody"></div>
+</section>
+
+<!-- 결과 -->
+<section class="view" id="v-result">
+  <div class="hd"><button class="bk" data-go="home" aria-label="홈">‹</button><b>지금 할 일</b></div>
+  <div id="rBody"></div>
+</section>
+
+<!-- 핵종 -->
+<section class="view" id="v-nuc">
+  <div class="hd"><button class="bk" data-go="home" aria-label="홈">‹</button><b>핵종별 특징</b></div>
+  <div id="nucBody"></div>
+</section>
+
+<!-- FAQ -->
+<section class="view" id="v-faq">
+  <div class="hd"><button class="bk" data-go="home" aria-label="홈">‹</button><b>자주 묻는 질문</b></div>
+  <div id="faqBody" style="padding-top:4px"></div>
+</section>
+
+<!-- 연락처 -->
+<section class="view" id="v-set">
+  <div class="hd"><button class="bk" data-go="home" aria-label="홈">‹</button><b>연락처 설정</b></div>
+  <p style="margin:14px 14px 4px;color:var(--sub);font-size:14px">입력하면 모든 화면 아래의 전화 버튼에 연결됩니다. 이 기기에만 저장됩니다.</p>
+  <div class="field"><label>방사선안전관리자 전화번호</label><input id="rsoNum" type="tel" inputmode="numeric"placeholder="숫자만 입력 (예: 01000000000)"></div>
+  <div class="field"><button class="next" id="saveSet" style="margin:0">저장</button><button class="delnum" id="delSet">번호 삭제</button><span class="ok" id="savedMsg"></span></div>
+</section>
+
+<!-- 근거 -->
+<section class="view" id="v-src">
+  <div class="hd"><button class="bk" data-go="home" aria-label="홈">‹</button><b>근거 자료</b></div>
+  <div class="card src"><p style="margin:0 0 10px;font-size:14px;color:var(--sub)">앱의 모든 행동요령과 핵종 정보는 아래 공식 기관 자료에서 가져왔습니다. 국내 보고 기준과 연락 체계는 원자력안전법과 소속 기관 방사선안전관리규정을 따릅니다.</p><ul id="srcList" style="padding-left:18px;margin:0"></ul></div>
+</section>
+
+
+<div class="ov" id="launcher">
+  <div class="sb"><span id="sbTime">16:52</span><span>📶 🔋</span></div>
+  <div class="clk"><b id="lkTime">16:52</b><span id="lkDate"></span></div>
+  <div class="mid"><button class="ic me" id="openApp"><i>☢</i><span style="text-align:center;line-height:1.3">방사성물질<br>유출 대응 길잡이</span></button></div>
+  <div class="grid">
+    <button class="ic" id="icCal"><i style="background:#fff">📅</i>캘린더</button>
+    <button class="ic" id="icGal"><i style="background:#fff">🖼️</i>갤러리</button>
+    <button class="ic" id="dkCam"><i style="background:#fff">📷</i>카메라</button>
+  </div>
+  <div class="dock">
+    <button class="ic" id="dkPhone"><i style="background:#3fbf6a"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" style="flex:none"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg></i><span>전화</span></button>
+    <button class="ic" id="dkMsg"><i style="background:#3d8bfd">💬</i><span>메시지</span></button>
+  </div>
+</div>
+<div class="ov" id="splash"><i>☢</i><b>방사성물질<br>유출 대응 길잡이</b><small>병원 핵의학과 · 연구실</small></div>
+<div class="ov" id="msgs">
+  <div class="sb" style="color:#111"><span id="sbTime2">16:52</span><span>📶 🔋</span></div>
+  <div class="mh"><button class="bk" id="msgBack" aria-label="뒤로">‹</button><div class="av">방</div><div style="flex:1"><b>방사선안전관리자</b><small id="msgNum"></small></div><button class="hic" id="msgCall" aria-label="전화"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></button></div>
+  <div class="demo">시연용 화면입니다 · 실제 문자는 전송되지 않습니다</div>
+  <div class="mb" id="msgBody"></div>
+  <div class="ib"><button class="pl" id="msgPlus" aria-label="사진 첨부">+</button><input id="msgIn" placeholder="메시지 입력" autocomplete="off"><button class="sd" id="msgSend" aria-label="보내기">➤</button></div>
+</div>
+
+<div class="ov pa" id="mlist">
+  <div class="sb" style="color:#111"><span class="sbt">16:52</span><span>📶 🔋</span></div>
+  <div class="pt">메시지</div>
+  <div id="mlistBody"></div>
+</div>
+<div class="ov pa" id="dialer">
+  <div class="sb" style="color:#111"><span class="sbt">16:52</span><span>📶 🔋</span></div>
+  <div class="dd"><div id="dNum"></div><small id="dName"></small></div>
+  <button class="dsug" id="dSug"></button>
+  <div class="kp" id="kp"></div>
+  <div class="kr"><span></span><button class="callb" id="dCall" aria-label="통화"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg></button><button class="del" id="dDel" aria-label="지우기">⌫</button></div>
+</div>
+<div class="ov" id="call">
+  <div class="sb"><span class="sbt">16:52</span><span>📶 🔋</span></div>
+  <div class="cn"><div class="cav" id="cAv">방</div><b id="cName"></b><small id="cNum"></small><span id="cSt">전화 거는 중…</span></div>
+  <div class="cg"><div><i>🔊</i>스피커</div><div><i>🎙️</i>음소거</div><div><i>⌨️</i>키패드</div></div>
+  <button class="endb" id="cEnd" aria-label="통화 종료"><svg width="34" height="34" viewBox="0 0 24 24" fill="#fff" style="transform:rotate(135deg)"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg></button>
+  <p class="cdemo">시연용 화면입니다 · 실제로 전화가 걸리지 않습니다</p>
+</div>
+
+<div class="ov pa" id="calApp">
+  <div class="sb" style="color:#111"><span class="sbt">16:52</span><span>📶 🔋</span></div>
+  <div class="calh"><button id="calPrev" aria-label="이전 달">‹</button><b id="calTitle"></b><button id="calNext" aria-label="다음 달">›</button></div>
+  <div class="calw"><span style="color:#e53935">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span style="color:#1e66d0">토</span></div>
+  <div class="calg" id="calGrid"></div>
+  <div class="caltoday" id="calToday"></div>
+</div>
+<div class="ov pa" id="galApp">
+  <div class="sb" style="color:#111"><span class="sbt">16:52</span><span>📶 🔋</span></div>
+  <div class="pt">갤러리</div>
+  <div class="galg" id="galGrid"></div>
+  <button class="galadd" id="galAdd">＋ 사진 가져오기</button>
+</div>
+<div class="ov" id="camApp">
+  <video id="camV" autoplay playsinline muted></video>
+  <div class="camfb" id="camFb"><p>이 화면에서는 카메라를 바로 켤 수 없어요.</p><button id="camPick">휴대폰 카메라 열기</button></div>
+  <div class="camflash" id="camFlash"></div>
+  <div class="camb"><button class="camthumb" id="camThumb" aria-label="갤러리"></button><button class="shut" id="camShut" aria-label="촬영"></button><span style="width:52px"></span></div>
+</div>
+<input type="file" id="fCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="fGal" accept="image/*" hidden>
+<div class="ov" id="photoV"><img id="photoImg" alt=""><button class="phx" id="photoX" aria-label="닫기">✕</button><button class="phdel" id="photoDel">🗑 삭제</button></div>
+<nav class="navbar dk" id="navbar">
+  <button id="nvRecent" aria-label="최근 앱"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4v12M10 4v12M15 4v12"/></svg></button>
+  <button id="nvHome" aria-label="홈"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="16" height="16" rx="6"/></svg></button>
+  <button id="nvBack" aria-label="뒤로"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3l-7 7 7 7"/></svg></button>
+</nav>
+<div class="mdl" id="mdl"><div class="box" id="mdlBox"></div></div>
+<div class="callbar">
+  <a class="c119" href="#" role="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" style="flex:none"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg> 119</a>
+  <a class="crso" id="rsoBtn" href="#"><span style="display:flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" style="flex:none"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>방사선안전관리자</span><small id="rsoTxt" style="font-size:15px;font-weight:900;opacity:1">번호를 설정하세요</small></a>
+</div>
+</div>
+
+<script>
+const IMG_BIN='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAH8AYkDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7KopaKAEopaKAEopaKAEopaKAEopaKAEopaKAEopaKAEopaKAEopaKAK19L5FrJN/dWsnwxqf2lWjl+/95W/vLU3iyfytLZV+9I22uStZWgmjkibb5bfLXhY3MHRxUYdOom7HotFVdNulvLVJl/iXmrde3CanFSjsxiUUtFUAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLRQAUUlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0lFFABRTJZI4ozJIyqo/iNcT4h8c28bG301vMb+J9tY1a8KSvJgdzRXIeFfFkd9tt7uRVk/vf3q6zK43A9amliadaPNFiTucn40n33kcKt91fmrHjXctSaldLdalPJ975ttQeaq/dr84zLG82LlJvqM2fD999juvJZv3cldcvPzL0rgbOeNpPmWut0e8WRfJZl+X7v+0tfTZHmkJ/uW/QDUooor6kBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigBaKSigAooooAKKKKACiiigAooooAKKKKACiiigAooooA89+J89+t1BbxyMtsy/dX+KuIt7GZvux16Z8QoP9HguP7vy1y9qis1fJZnKUcQ4tksz7Wxmih3fdaur0fXLqKza1l/efLtjaqkcW6P5f4adaovnL8v8VeDUx1XDybpsEilb20jbpJPvbvmokb5vlrWmtm8zbEtQfYZN3+rr4zFYmU6zfQ2SsVLWDza0I2msdkyN80dOhiWKp9u+Fv71dmBxPs6iknqElodPpd5HfWaXEbL833quVzXglWSO5Vv73y10tfsmW4h4jDQqPqjMKKKK7gCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDF8Ywedosny7tvzVxcMf7vctek3kSz27xOu5WFcyqWcUjQy2art/ir53N8OnUU2JlLS9u3a9E0eyRtv3acyrHdbY/wDV1ZmjWRV/u1+dZhVanKJcSGGT5qndf7rbqi2bakjr5idZczi1ubJFdm2/eWpoU8xdyt/wGp2g89flX5qqRq0Vx8/yqtdNKNWlJSa91jab0Rq+GF2tc/7y1vVyuh6naprLWMc0cnmLu+Vq6hnVfvNX7Lw5XjPL4vtoZVYSg7SQ6ikVl9aXdXvKSZmFFLSVQBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUALRSUUALRSUUALRSUUALRSUUALRSUUALRSUUALRSUUALWNrlnu/0qNfmX71bFNZd3yt92ubF4eOIpODA4mT5m8yrdu26n6pbfZbzaq7opPu/7NQW+2Nm3V+RZxhpUazUi4voTstNX71I0qqu6snWpZry1ks7Zmj8xdrOv3lr5qrGClds6aaUrJmXrXj+x0/xAuj2EbX17t+ZIv4Wqeax1zWLV2v76Sxjn/wCW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',IMG_EAR='';
+// ============================ 핵종 ============================
+// CNSC 핵종 정보 책자 / NRC 대량 유출 기준표 / NRC 규제지침 8.20
+const NUC={
+ tc99m:{t:"Tc-99m",ko:"테크네튬-99m",half:"6.01시간",ray:"감마선 140.5 keV",shield:"납 (반가층 0.4 mm)",detect:"NaI·GM 측정기, 액체섬광계수기",nrc:"100 mCi",short:1},
+ f18:{t:"F-18",ko:"플루오린-18",half:"1.83시간",ray:"양전자 → 511 keV 감마선",shield:"납 (반가층 7 mm)",detect:"NaI·GM 측정기",nrc:"10 mCi",short:1},
+ ga68:{t:"Ga-68",ko:"갈륨-68",half:"1.13시간",ray:"511 keV 감마선",shield:"납 (반가층 7.2 mm)",detect:"NaI·GM 측정기",nrc:"",short:1},
+ i131:{t:"I-131",ko:"요오드-131",half:"8.03일",ray:"감마선 364.5 keV",shield:"납 (반가층 3.9 mm)",detect:"NaI·GM 측정기",nrc:"1 mCi",iod:1},
+ i125:{t:"I-125",ko:"요오드-125",half:"59.4일",ray:"저에너지 감마·X선 27~35 keV",shield:"얇은 납 (반가층 0.02 mm)",detect:"오염은 NaI 측정기 / 선량률은 특수 장비가 필요할 수 있음",nrc:"1 mCi",iod:1},
+ y90:{t:"Y-90",ko:"이트륨-90",half:"2.67일",ray:"고에너지 베타선 (최대 2280 keV), 감마선 없음",shield:"플라스틱(아크릴) 약 9.2 mm",detect:"GM·비례계수기·플라스틱 섬광 측정기",nrc:"100 mCi",beta:1},
+ p32:{t:"P-32",ko:"인-32",half:"14.27일",ray:"고에너지 베타선 (최대 1710 keV), 감마선 없음",shield:"플라스틱(아크릴) 약 6.8 mm",detect:"GM·비례계수기 (감마 선량계로는 안 잡힘)",nrc:"10 mCi",beta:1},
+ h3:{t:"H-3",ko:"삼중수소",half:"12.33년",ray:"매우 약한 베타선 (최대 18.6 keV)",shield:"필요 없음",detect:"휴대용 측정기로는 대체로 안 잡힘 → 스미어 + 액체섬광계수기",nrc:""},
+ c14:{t:"C-14",ko:"탄소-14",half:"5,700년",ray:"약한 베타선 (최대 156 keV)",shield:"거의 필요 없음 (플라스틱 0.25 mm)",detect:"얇은 창 GM·비례계수기, 액체섬광계수기",nrc:"10 mCi"},
+ s35:{t:"S-35",ko:"황-35",half:"87.32일",ray:"약한 베타선 (최대 167 keV)",shield:"거의 필요 없음 (플라스틱 0.28 mm)",detect:"GM·비례계수기, 액체섬광계수기",nrc:""},
+ cs137:{t:"Cs-137",ko:"세슘-137 (밀봉선원)",half:"30.08년",ray:"감마선 661.7 keV",shield:"납 (반가층 9.4 mm)",detect:"NaI·GM 측정기",nrc:"",sealed:1},
+ co60:{t:"Co-60",ko:"코발트-60 (밀봉선원)",half:"5.27년",ray:"고에너지 감마선 1173·1332 keV",shield:"납 (반가층 20.2 mm)",detect:"NaI·GM 측정기, 이온함",nrc:"1 mCi",sealed:1},
+ unk:{t:"모름",ko:"물질 미확인"},
+};
+NUC.mix={t:"여러 물질",ko:"섞임",half:"",ray:"",shield:"",detect:"",nrc:""};
+const ALL=["tc99m","f18","ga68","i131","i125","y90","p32","h3","c14","s35","cs137","co60","unk"];
+const PLACE={
+ nm:{t:"핵의학과",list:["tc99m","f18","ga68","i131","i125","y90","cs137","co60","unk"]},
+ lab:{t:"방사성동위원소 실험실",list:["p32","h3","c14","s35","i125","i131","cs137","co60","unk"]},
+};
+
+// 핵종별 추가 대처 (결과 화면에 그대로 붙음)
+function nucExtra(id){
+ const n=NUC[id], L=[];
+ const hl=(h=>h<2?Math.round(h*60)+"분":Math.round(h)+"시간")(parseFloat(n.half||"0"));
+ if(n.short) L.push(["반감기가 짧음 (약 "+hl+")","시간이 지나면 방사능이 빠르게 줄어듭니다. 그래서 바로 치우지 않고 출입을 막은 채 기다렸다가 정리하기도 합니다. 언제 정리할지는 방사선안전관리자가 정합니다."]);
+ if(id==="f18"||id==="ga68") L.push(["에너지가 큰 감마선 (511 keV)","가려야 하면 납을 씁니다 (납 약 7 mm에 방사선이 절반으로 줄어듦). 거리를 두고 머무는 시간을 줄입니다."]);
+ if(id==="tc99m") L.push(["감마선 140 keV","얇은 납으로도 가릴 수 있습니다 (납 0.4 mm에 방사선이 절반으로 줄어듦)."]);
+ if(n.iod){L.push(["요오드는 공기 중으로 날릴 수 있음","흄후드(실험실 배기 장치)는 끄지 말고 켜 둡니다."]);L.push(["갑상선 검사","요오드를 다룬 사람은 몸 안에 들어갔는지 갑상선 검사를 받게 될 수 있습니다. 담당자가 준비합니다."]);}
+ if(id==="i125") L.push(["오염은 NaI 측정기로 확인","에너지가 낮은 방사선을 내서, 오염 확인에는 NaI 측정기를 씁니다. 측정은 방사선안전관리자에게 맡깁니다."]);
+ if(n.beta){L.push(["차폐는 아크릴판(플라스틱) 먼저","에너지가 큰 베타선은 납에 부딪히면 X선이 생길 수 있습니다. 그래서 아크릴판을 먼저 사용하고, 납이 필요하면 아크릴판 바깥쪽에 덧댑니다."]);}
+ if(id==="p32") L.push(["피부에 묻으면 피부가 받는 방사선이 큼","피부에 묻었으면 바로 씻습니다. 일반 휴대용 측정기(GM)로 잘 잡힙니다."]);
+ if(id==="h3"){L.push(["측정기 소리가 안 나도 오염일 수 있음","휴대용 측정기로는 대체로 잡히지 않습니다. 묻은 곳을 시험용 여과지나 면봉으로 닦아 내고(스미어), 실험실 장비(액체섬광계수기)로 측정합니다."]);L.push(["장갑을 통과함","일반 라텍스·니트릴 장갑과 플라스틱 병을 통과하고, 피부로도 흡수됩니다. 몸 안에 들어갔을 때 위험한 핵종입니다."]);}
+ if(id==="c14"||id==="s35"){L.push(["낮은 오염은 측정기로 놓치기 쉬움","묻은 곳을 시험용 여과지나 면봉으로 닦아 내고(스미어), 실험실 장비(액체섬광계수기)로 측정해 확인합니다."]);}
+ if(id==="c14") L.push(["반감기 5,700년","기다려도 방사능이 거의 줄지 않습니다."]);
+ if(n.sealed){L.push(["강한 감마선 · 납으로 가림","납 약 "+n.shield.replace(/[^0-9.]/g,"")+" mm에 방사선이 절반으로 줄어듭니다. 가까이 오래 있지 않습니다."]);L.push(["밀봉선원은 손으로 만지지 않기","긴 집게 같은 도구로 거리를 두고 다뤄 손이 받는 방사선을 줄입니다. 직접 옮기지 말고 방사선안전관리자에게 맡깁니다."]);}
+ if(n.nrc) L.push(["대량 유출 기준: "+n.nrc,"이 양을 넘게 쏟아지면 대량 유출 절차를 따릅니다."]);
+ return L;
+}
+
+// ============================ 질문 ============================
+const ans={};
+const QS=[
+ {k:"hurt",t:"생명이 위험한 부상자가 있나요?",h:"의식이 없거나, 피를 많이 흘리거나, 숨쉬기 힘든 경우",o:[["yes","🚑","있음",1],["no","🙂","없음"]]},
+ {k:"nuc",t:"어떤 물질인가요?",h:"모르면 '모름'을 누르세요",grid:1},
+ {k:"form",t:"어떤 상황인가요?",o:[["liquid","💧","액체가 쏟아짐","용액, 바이알, 주사기 내용물"],["vol","💨","가루·증기가 날림","휘발성 물질, 분말, 공기 중 확산 의심"],["sealed","📦","선원·포장물이 깨짐","밀봉선원·운반 용기 파손"]]},
+ {k:"body",t:"사람에게 묻었을 수 있나요?",h:"방사성물질은 눈에 보이지 않습니다. 측정 전이면 '모름'을 누르세요.",multi:1,o:[["unsure","❔","모름 (아직 측정 안 함)"],["none","✅","아니오 (측정해서 확인함)"],["clothes","🥼","옷·신발"],["skin","✋","피부"],["face","👁️","얼굴·눈·코"],["wound","🩹","상처"],["intake","🫁","삼킴·들이마심"]],
+  extra:{k:"who",t:"현장에 이런 사람이 있나요?",o:[["many","👥","여러 명이 함께 있었음"],["preg","🤰","임신 중인 사람"]]}},
+ {k:"amount",t:"쏟아진 양은?",dyn:1},
+];
+function activeQs(){return QS.filter(q=>{
+ if(q.k==="amount"){ if(ans.form!=="liquid")return false; const b=(ans.body||[]).filter(x=>x!=="none"); if(b.length)return false; if(ans.nuc==="unk"||ans.nuc==="mix")return false; }
+ return true;});}
+let qi=0;
+let lastQi=null;
+function renderQ(){
+ if(qi<0){
+  $("qProg").style.width="0%";
+  $("qBody").innerHTML=`<div class="qn">질문 전에 먼저</div><div class="qt">지금 바로 이것부터</div><p class="qh">당황하지 마세요. 어떤 유출이든 똑같습니다.</p>
+  <ol class="st">${[["다친 사람이 있으면 응급처치·119","오염 제거보다 생명이 먼저"],["주변에 알리고 가까이 오지 못하게",""],["흡수지로 덮기","많이 쏟아졌으면 덮기만 하고 치우지 않기"],["오래 머물지 말고, 떨어져 있고, 만지지 않기","현장에서는 먹거나 마시지 않습니다."]].map(([t,d],i)=>`<li style="cursor:default"><span class="n">${i+1}</span><div><b>${t}</b>${d?`<span class="d">${d}</span>`:""}</div></li>`).join("")}</ol>
+  <button class="next" id="firstNext">했어요 → 내 상황 확인하기</button>`;
+  $("firstNext").onclick=()=>{qi=0;renderQ();}; window.scrollTo(0,0); lastQi=-1; return;
+ }
+ const qs=activeQs(); if(qi>=qs.length){showResult();return;}
+ const q=qs[qi]; $("qProg").style.width=((qi)/qs.length*100)+"%";
+ let qh=q.h; if(q.k==="form") qh=(mixIds(ans).some(id=>NUC[id]&&NUC[id].sealed)?"밀봉선원은 보통 '선원·포장물이 깨짐'을 고릅니다. ":"")+"깨진 곳에서 액체나 가루가 새어 나왔다면 '액체'나 '가루'도 함께 고르세요.";
+ let h=`<div class="qn">질문 ${qi+1} / ${qs.length}</div><div class="qt">${q.t}</div>${qh?`<p class="qh">${qh}</p>`:'<div style="height:12px"></div>'}`;
+ if(q.k==="nuc"){
+  if(ans.nuc==="mix"){
+   const m=ans.mix||[];
+   h=`<div class="qn">질문 ${qi+1} / ${qs.length}</div><div class="qt">섞인 물질을 모두 고르세요</div><p class="qh">아는 것만 고르세요. 하나도 모르면 아래 버튼으로 돌아가 '모름'을 고르세요.</p>`;
+   h+=`<div class="grid2">${ALL.filter(id=>id!=="unk").map(id=>`<button class="opt mx ${m.includes(id)?"on":""}" data-m="${id}">${NUC[id].t}<small>${NUC[id].ko}</small></button>`).join("")}</div>`;
+   h+=`<button class="next" id="mxNext" ${m.length>=2?"":"disabled"}>${m.length>=2?"다음":"두 개 이상 고르세요"}</button><button class="mxback" id="mxBack">← 한 가지 물질로 고르기</button>`;
+  } else {
+   h+=`<div class="grid2">${ALL.map(id=>`<button class="opt ${ans.nuc===id?"on":""}" data-v="${id}">${NUC[id].t}<small>${NUC[id].ko}</small></button>`).join("")}<button class="opt mixb" data-v="mix">여러 물질<small>두 가지 이상 섞임</small></button></div>`;
+  }
+ } else if(q.k==="amount"){
+  const n=NUC[ans.nuc];
+  q.t="쏟아진 양은?";
+  h=`<div class="qn">질문 ${qi+1} / ${qs.length}</div><div class="qt">쏟아진 양이 ${n.nrc?n.nrc:"기관 기준"}을 넘나요?</div><p class="qh">${n.nrc?n.t+"의 대량 유출 기준입니다.":"이 핵종은 기준표에 없어 소속 기관 기준으로 판단합니다."} 흡수지로 덮을 수 없을 만큼 넓게 퍼졌다면 '넘음'을 누르세요.</p>`;
+  h+=`<div class="opts">${[["unk","❔","모름"],["over","⚠️","넘음 · 넓게 퍼짐"],["under","💧","안 넘음 · 국소"]].map(o=>optHTML(o,ans.amount===o[0])).join("")}</div>`;
+ } else if(q.k==="form"){
+  const f=ans.forms||[];
+  h+=`<div class="opts">${q.o.map(o=>optHTML(o,f.includes(o[0]),"forms")).join("")}</div>`;
+  h+=`<p class="qh" style="margin-top:10px">해당하는 것을 모두 고르세요.</p><button class="next" id="fNext" ${f.length?"":"disabled"}>${f.length?"다음":"하나 이상 선택하세요"}</button>`;
+ } else if(q.multi){
+  const sel=ans[q.k]||[];
+  h+=`<div class="opts">${q.o.map(o=>optHTML(o,sel.includes(o[0]),q.k)).join("")}</div>`;
+  const sel2=ans[q.extra.k]||[];
+  h+=`<div class="grp">${q.extra.t}</div><div class="opts">${q.extra.o.map(o=>optHTML(o,sel2.includes(o[0]),q.extra.k)).join("")}</div>`;
+  h+=`<button class="next" id="mNext" ${sel.length?"":"disabled"}>${sel.length?"다음":"하나 이상 선택하세요"}</button>`;
+ } else {
+  h+=`<div class="opts">${q.o.map(o=>optHTML(o,ans[q.k]===o[0])).join("")}</div>`;
+ }
+ $("qBody").innerHTML=h;
+ $("qBody").querySelectorAll('.opt[data-k="forms"]').forEach(b=>b.onclick=()=>{const v=b.dataset.v;let f=ans.forms||[];f=f.includes(v)?f.filter(x=>x!==v):[...f,v];ans.forms=f;setForm();renderQ();});
+ if($("fNext")) $("fNext").onclick=()=>{qi++;renderQ();};
+ $("qBody").querySelectorAll(".opt.mx").forEach(b=>b.onclick=()=>{const id=b.dataset.m;let m=ans.mix||[];m=m.includes(id)?m.filter(x=>x!==id):[...m,id];ans.mix=m;renderQ();});
+ if($("mxNext")) $("mxNext").onclick=()=>{qi++;renderQ();};
+ if($("mxBack")) $("mxBack").onclick=()=>{delete ans.nuc;delete ans.mix;renderQ();};
+ $("qBody").querySelectorAll('.opt:not(.mx):not([data-k="forms"])').forEach(b=>b.onclick=()=>{
+  const v=b.dataset.v, k=b.dataset.k||q.k;
+  if(k==="nuc"&&v==="mix"){ans.nuc="mix";ans.mix=ans.mix||[];renderQ();return;}
+  if(q.multi){
+   let a=ans[k]||[];
+   if(k==="body"){ if(v==="none"||v==="unsure")a=a.includes(v)?[]:[v]; else {a=a.filter(x=>x!=="none"&&x!=="unsure"); a=a.includes(v)?a.filter(x=>x!==v):[...a,v];} }
+   else a=a.includes(v)?a.filter(x=>x!==v):[...a,v];
+   ans[k]=a; renderQ(); return;
+  }
+  ans[k]=v;
+  if(k==="nuc" && NUC[v] && NUC[v].sealed && !ans.forms) {ans.forms=["sealed"];setForm();}
+  qi++; renderQ();
+ });
+ const mn=$("mNext"); if(mn) mn.onclick=()=>{qi++;renderQ();};
+ if(lastQi!==qi){window.scrollTo(0,0);lastQi=qi;}
+}
+function optHTML([v,ic,t,sub],on,k){return `<button class="opt ${on?"on":""}" data-v="${v}" ${k?`data-k="${k}"`:""}><i>${ic}</i><span>${t}${typeof sub==="string"?`<small>${sub}</small>`:""}</span></button>`;}
+$("qBack").onclick=()=>{ if(qi<0){go("home");return;} qi--; renderQ(); };
+
+// ============================ 행동요령 조각 ============================
+const P={
+ injury:[["생명이 위험하면 응급처치와 119가 먼저","오염 제거보다 의학적 안정화가 우선입니다."],["돕는 사람은 가능하면 방수 장갑·먼지 마스크","오염된 환자라도 돕는 사람에게 큰 위험이 될 가능성은 매우 낮습니다."],["안정된 뒤 환자의 옷을 벗기기","옷을 벗기면 오염을 최대 90%까지 줄일 수 있습니다."]],
+ first:[["주변 사람에게 알리고 가까이 오지 못하게",""],["흡수지로 덮어 퍼지지 않게","대량 유출이면 덮기만 하고 치우지는 않습니다."],["만지지 말고, 머무는 시간은 최소로","손을 입에 대지 않고, 먹고 마시거나 흡연하지 않습니다."]],
+ sealedFirst:[["당황하지 말고 선원·포장물에서 떨어지기","만지거나 옮기지 않습니다."],["다른 사람이 가까이 오지 못하게",""],["만졌을 수 있는 사람은 그 자리에 남아 측정받기",""],["만졌다면 비누와 미지근한 물로 손 씻기",""]],
+ clothes:[["오염된 겉옷과 신발을 조심해서 벗기","겉옷만 벗어도 최대 90%까지 없앨 수 있습니다. 먼지가 털리지 않게 합니다."],["얼굴 반대쪽으로 말아서 벗기","머리 위로 벗지 말고, 필요하면 잘라서 벗습니다."],["벗은 옷은 비닐봉투에 밀봉해 사람이 없는 곳에",""]],
+ skin:[["흐르는 미지근한 물로 헹군 뒤 순한 비누로 씻기","오염이 가장 높은 곳부터 씻습니다."],["씻을 때마다 측정해 확인",""],["남아 있으면 비닐로 덮어 땀을 낸 뒤 다시 씻기",""],["배경의 2배 이하가 되거나 더 줄지 않으면 멈추기","남은 부위는 방수 드레싱으로 덮습니다. 피부 바깥층은 12~15일 동안 자연히 떨어져 나갑니다."]],
+ face:[["코를 살살 풀기",""],["눈꺼풀·속눈썹·귀를 젖은 물티슈로 닦기","코와 입에서 바깥쪽으로 닦습니다."],["씻을 때 눈과 입은 감기","머리는 샴푸나 비누로 감고 린스는 쓰지 않습니다."]],
+ wound:[["열린 상처는 오염된 것으로 간주",""],["몸을 씻을 때 상처는 덮어 두기",""],["상처 세척은 주변 피부를 방수 드레싱으로 덮고 하기","물이 흘러 오염이 퍼지지 않게 합니다."],["의료진과 담당자에게 '상처 오염'이라고 알리기","상처 오염은 체내 오염으로 이어질 수 있습니다."]],
+ intake:[["손을 입에서 멀리, 먹고 마시지 않기",""],["방사선안전관리자에게 '체내 유입 의심'으로 알리기","체내 측정(바이오어세이)은 담당자가 준비합니다."]],
+ many:[["오염됐을 수 있는 사람은 측정 전까지 이동 금지",""],["오염 구역과 깨끗한 구역 사이에 완충 구역 두기",""],["오염 구역을 나올 때 겉옷을 벗고 측정받기",""]],
+ preg:[["임신한 사람은 제염 업무에서 빼기","태아는 방사선에 민감합니다. 제염 구역에서 일하지 않습니다."]],
+ major:[["관계없는 사람은 현장에서 나가게 하기",""],["오염됐을 수 있는 사람은 측정 전까지 움직이지 않게",""],["흄후드는 켜 둔 채로 두기","휘발성 물질이 옆 방이나 복도로 나가는 것을 줄입니다."],["더 오염·피폭되지 않을 때만 차폐하기",""],["구역을 닫고 잠근 뒤 경고 표지",""],["방사선안전관리자에게 즉시 연락","제염, 정리, 붕괴 대기 여부는 방사선안전관리자가 결정하고 지휘합니다."]],
+ vol:[["현장을 비우고 출입 통제","휘발성 물질 방출은 양과 관계없이 대량 유출입니다."],["호흡보호구가 있으면 사용",""]],
+ minor:[["보호복과 일회용 장갑 착용",""],["흡수지로 바깥쪽에서 가운데 쪽으로 정리",""],["쓴 흡수지·장갑은 비닐봉투에 담아 표시된 방사성폐기물 용기로",""],["스미어 시험이나 측정기로 남은 오염 확인, 기준에 맞을 때까지 반복",""],["손·옷·신발 오염 확인",""],["담당자·방사선안전관리자에게 보고",""]],
+ sealedSite:[["방사선안전관리자에게 즉시 연락",""],["시간은 짧게, 거리는 멀게","깨진 선원은 내용물이 새어 오염이 퍼질 수 있으니 손·신발 측정을 받습니다."]],
+};
+const D={
+ injury:[["오염이 걱정돼 응급처치 미루기","제염이 안정화를 늦추거나 방해하면 안 됩니다."]],
+ clothes:[["옷을 털거나 머리 위로 벗기",""]],
+ skin:[["뜨거운 물·찬물","뜨거운 물은 흡수를 늘리고 화상 위험, 찬물은 모공을 닫아 오염을 가둡니다."],["솔로 문지르거나 긁기","피부 장벽이 손상되면 체내 오염 위험이 커집니다."],["끝까지 다 지우려 하기",""]],
+ face:[["얼굴·눈·입을 손으로 만지기",""],["린스(컨디셔너) 쓰기","방사성물질이 머리카락에 달라붙습니다."]],
+ wound:[["상처를 문지르기",""]],
+ major:[["측정 전에 현장을 떠나거나 돌아다니기",""],["흄후드 끄기",""],["담당자 지휘 없이 정리하기",""]],
+ minor:[["가운데에서 바깥쪽으로 닦기","오염 범위가 넓어집니다."]],
+ sealed:[["선원·포장물을 줍거나 열거나 옮기기",""],["만진 사람이 몸을 측정받기 전에 자리를 떠나기",""]],
+ preg:[["임신한 사람이 제염팀에 참여하기",""]],
+ always:[["현장에서 먹고 마시거나 흡연하기",""]],
+};
+
+// ============================ 결과 ============================
+function build(a){
+ const body=(a.body||[]).filter(x=>x!=="none"), who=a.who||[], n=NUC[a.nuc]||NUC.unk;
+ let type, why=[];
+ if(a.form==="sealed"){type="sealed";}
+ else{
+  const big = body.length>0 || a.form==="vol" || a.amount==="over" || a.amount==="unk" || a.nuc==="unk" || a.nuc==="mix";
+  type = big?"major":"minor";
+  if(body.length) why.push(body.includes("unsure")?"사람 오염 여부를 모름 (측정 전)":"사람이 오염됐을 수 있음");
+  if(a.form==="vol") why.push("가루·증기 (휘발성)");
+  if(a.amount==="over") why.push("양이 기준 초과");
+  if(a.amount==="unk") why.push("양을 모름");
+  if(a.nuc==="unk") why.push("물질을 모름");
+  if(a.nuc==="mix") why.push("여러 물질이 섞임 (기준을 하나로 정할 수 없어 대량으로 대응)");
+  if(type==="minor") why.push("사람 오염 없음, 양이 기준 이하");
+ }
+ if(type==="sealed") why.push("밀봉선원·포장물 파손");
+ if(a.sealedToo) why.push("선원·포장물도 깨짐");
+ const sec=[];
+ if(a.hurt==="yes") sec.push({lab:"최우선",c:"var(--red)",t:"다친 사람",s:P.injury});
+ sec.push({lab:"바로",c:"var(--ink)",t:"지금 바로",s:type==="sealed"?P.sealedFirst:P.first});
+ const ps=[]; ["clothes","skin","face","wound","intake"].forEach(k=>{if(body.includes(k))ps.push(...P[k]);});
+ if(who.includes("many"))ps.push(...P.many); if(who.includes("preg"))ps.push(...P.preg);
+ if(ps.length) sec.push({lab:"사람",c:"#0b6e8a",t:"사람 제염",s:ps});
+ if(type==="major"){const s=[...P.major]; if(a.form==="vol")s.splice(1,0,...P.vol); sec.push({lab:"현장",c:"var(--red)",t:"대량 유출 현장 조치",s});}
+ if(type==="minor") sec.push({lab:"현장",c:"var(--green)",t:"소량 유출 정리",s:P.minor});
+ if(type==="sealed") sec.push({lab:"현장",c:"var(--purple)",t:"선원·포장물 현장 조치",s:P.sealedSite});
+ const dn=[]; if(a.hurt==="yes")dn.push(...D.injury);
+ ["clothes","skin","face","wound"].forEach(k=>{if(body.includes(k))dn.push(...D[k]);});
+ dn.push(...(type==="sealed"?D.sealed:type==="major"?D.major:D.minor)); if(who.includes("preg"))dn.push(...D.preg); dn.push(...D.always);
+ return {type,why,sec,dn,n,extra:a.nuc&&a.nuc!=="unk"?nucExtra(a.nuc):[]};
+}
+let doneSet={};
+function setForm(){const f=ans.forms||[];ans.form=f.includes("vol")?"vol":f.includes("liquid")?"liquid":f.includes("sealed")?"sealed":undefined;ans.sealedToo=f.includes("sealed")&&f.length>1;}
+function mixIds(a){return a.nuc==="mix"?(a.mix||[]):[a.nuc];}
+function nucLabel(a){if(a.nuc==="mix")return "여러 물질 · "+(a.mix||[]).map(id=>NUC[id].t).join(", ");const n=NUC[a.nuc]||NUC.unk;return n.t==="모름"?"물질 미확인":n.t+" · "+n.ko;}
+function tipOf(id){
+ const n=NUC[id]||{};
+ const hl=(h=>h<2?Math.round(h*60)+"분":Math.round(h)+"시간")(parseFloat(n.half||"0"));
+ const SMEAR_HOW="묻은 곳을 시험용 여과지나 면봉으로 닦아 내고(스미어), 그것을 실험실 장비(액체섬광계수기)로 측정해";
+ const SHORT=["반감기가 짧은 물질",(n.t||"")+"은 약 "+hl+"마다 방사능이 절반으로 줄어듭니다. 그래서 바로 치우지 않고 출입을 막은 채 기다렸다가 정리하기도 합니다. 언제 정리할지는 방사선안전관리자가 정합니다."];
+ const BETA=["차폐는 아크릴판(플라스틱)으로","에너지가 큰 베타선은 납에 부딪히면 X선이 생깁니다. 그래서 차폐할 때는 아크릴판을 먼저 사용하고, 납이 필요하면 아크릴판 바깥쪽에 덧댑니다."];
+ const IOD=["요오드는 공기 중으로 날릴 수 있음","흄후드(실험실 배기 장치)는 끄지 말고 켜 둡니다. 요오드를 다룬 사람은 갑상선 검사를 받게 될 수 있습니다."];
+ const SMEAR=["측정기에 잘 안 잡힐 수 있음","오염이 적으면 측정기로 놓치기 쉽습니다. "+SMEAR_HOW+" 확인합니다."];
+ const GAM=["강한 감마선을 내는 선원","가까이 가지 말고, 직접 줍거나 옮기지 않습니다. 방사선안전관리자가 긴 집게 같은 도구로 거리를 두고 다룹니다."];
+ return {p32:BETA,y90:BETA,h3:["측정기에 거의 안 잡힘","휴대용 측정기에 반응이 없어도 오염일 수 있습니다. "+SMEAR_HOW+"야 확인되고, 일반 장갑도 통과합니다."],c14:SMEAR,s35:SMEAR,i131:IOD,i125:IOD,tc99m:SHORT,f18:SHORT,ga68:SHORT,cs137:GAM,co60:GAM,unk:["물질을 모를 때","확인하러 현장에 다시 들어가지 말고, 보고할 때 '물질 미확인'이라고 알립니다."]}[id]||null;
+}
+function core(a){
+ const body=(a.body||[]).filter(x=>x!=="none"), who=a.who||[], n=NUC[a.nuc]||{}, L=[];
+ const r=build(a);
+ if(a.hurt==="yes") L.push(["응급처치·119가 먼저","오염 제거보다 생명이 우선"]);
+ if(r.type==="sealed"){
+  L.push(["깨진 선원·포장물에서 떨어지고, 만지거나 옮기지 않기","다른 사람도 가까이 오지 못하게 합니다."]);
+  L.push(["선원·포장물을 만진 사람은 그 자리에서 측정받기","만졌다면 미지근한 물과 비누로 손을 씻습니다."]);
+ } else {
+  L.push(["주변에 알리고 접근 막기",""]);
+  L.push([r.type==="major"?"흡수지로 덮기만 (치우지 않기)":"흡수지로 덮기",""]);
+  if(a.form==="vol") L.push(["흄후드는 켠 채로, 현장 비우기","호흡보호구가 있으면 사용"]);
+ }
+ if(a.sealedToo){L.push(["깨진 선원·포장물은 만지거나 옮기지 않기","새어 나온 물질 외에 깨진 선원·포장물 자체도 그대로 둡니다."]);}
+ if(body.includes("clothes")) L.push(["벗어서 방사성폐기물 봉투에 넣고 밀봉하기","없으면 비닐봉투에 넣어 밀봉하고, 일반 쓰레기와 섞이지 않게 사람이 없는 곳에 따로 둡니다. 겉옷만 벗어도 묻은 물질의 최대 90%를 없앨 수 있습니다.","bin","옷·신발"]);
+ if(body.includes("wound")) L.push(["씻기 전에 방수 밴드로 덮기","씻기 전에 먼저 방수 밴드나 방수 드레싱으로 덮어, 씻는 동안 물질이 상처로 들어가지 않게 합니다. 상처에 묻었다는 내용은 방사선안전관리자 보고에 함께 들어갑니다.","","상처"]);
+ if(body.includes("skin")) L.push(["미지근한 물과 순한 비누로 살살 씻기","비누 거품으로 부드럽게 씻어 내고, 솔이나 수세미로 세게 문지르지 않습니다. 피부가 상하면 방사성물질이 몸 안으로 들어갈 수 있습니다.","","피부"]);
+ if(body.includes("face")) L.push(["코를 풀고, 젖은 수건이나 물티슈로 눈꺼풀·귀 닦기","입과 코에서 바깥쪽으로 닦아 냅니다. 쓴 휴지와 수건은 벗은 옷과 같은 봉투에 넣습니다.","","얼굴"]);
+ if(body.includes("unsure")) L.push(["오염됐을 수 있다고 보고 측정받기","측정 전에는 오염된 것처럼 행동합니다.","","모두"]);
+ if(body.includes("intake")) L.push(["먹거나 마시지 말고 체내 측정 기다리기","체내에 들어갔는지는 따로 측정해야 하며, 방사선안전관리자가 준비합니다. 삼키거나 들이마셨을 수 있다는 내용은 보고에 함께 들어갑니다.","","삼킴·흡입"]);
+ if(who.includes("preg")) L.push(["오염 제거 작업을 맡지 않기","다른 사람처럼 현장 밖으로 나가지 않고 측정을 기다리되, 쏟아진 곳에서 가장 먼 자리에 있습니다. 정리와 씻기는 다른 사람이 맡습니다.","","임신한 사람"]);
+ if(r.type==="major") L.push(["측정 전까지 아무도 이동 금지","현장에 있던 사람은 그 자리에서 기다리고, 방사선안전관리자가 손·옷·신발을 측정할 때까지 나가지 않습니다. 측정은 현장에서 하거나 출입구 근처 오염검사실(손·발 오염 측정기)로 안내받아 합니다. 출입구에 경고 표지를 두어 다른 사람이 들어오지 않게 합니다."]);
+ if(r.type==="minor") L.push(["장갑 끼고 바깥 → 가운데로 정리","정리 후 손·옷·신발 측정"]);
+ L.push(["방사선안전관리자에게 연락",(r.type==="minor"?"양이 적어도 보고합니다. ":"")+"보고하기를 누르면 물질·상황·오염 부위·한 일이 정리되어 전달됩니다. 출입 기록으로 현장에 있던 사람 명단도 남깁니다."]);
+ const tips=(a.nuc==="mix"?(a.mix||[]):[a.nuc]).map(id=>[id,tipOf(id)]).filter(x=>x[1]);
+ const dn=[]; if(body.includes("skin"))dn.push("뜨거운 물·솔로 문지르기");
+ if(a.form==="vol"||mixIds(a).some(id=>NUC[id]&&NUC[id].iod))dn.push("흄후드 끄기");
+ if(r.type!=="minor")dn.push("몸(손·옷·신발)을 측정받기 전에 현장 떠나기");
+ dn.push("현장에서 먹고 마시기");
+ return {L,dn:dn.slice(0,3),r,tips};
+}
+function showResult(){
+ const {L,dn,r,tips}=core(ans); doneSet={}; reportedAt=null; memo=""; rpt={people:"",hurtN:"",preg:""}; const total=L.length;
+ const T={major:"대량 유출로 대응",minor:"소량 유출로 대응",sealed:"선원·포장물 파손 대응"};
+ let h=`<div class="verdict ${r.type}"><small>${nucLabel(ans)}</small><h2>${T[r.type]}</h2><ul>${r.why.map(w=>`<li>${w}</li>`).join("")}</ul></div>`;
+ h+=`<div class="stick"><span>한 일 체크</span><div class="tr"><div class="fl" id="fl" style="width:0"></div></div><span id="cnt">0/${total}</span></div>`;
+ h+=`<p style="margin:12px 14px 0;font-size:13.5px;color:var(--sub)">한 일을 누르면 체크됩니다. 담당자가 오기 전에 빠진 것이 없는지 확인하세요.</p>`;
+ h+=`<div class="blk"><h3>지금 할 일 ${total}가지</h3><ol class="st">${L.map(([t,d,fig,tag],i)=>`<li data-i="${i}"><span class="n">${i+1}</span><div>${tag?`<span class="tg">${tag}</span>`:""}<b>${t}</b>${d?`<span class="d">${d}</span>`:""}${fig?`<details class="fig"><summary>${fig==="bin"?"사진 보기":"그림 보기"}</summary><img src="${fig==="bin"?IMG_BIN:IMG_EAR}" alt="${fig==="bin"?"방사성폐기물 전용 봉투":"귀 닦는 방법"}" style="${fig==="bin"?"width:60%;display:block;margin:6px auto 0":"width:100%;margin-top:6px"};border-radius:8px"><small style="display:block;color:var(--sub);font-size:12px">${fig==="bin"?"방사성폐기물 전용 봉투 예시 — 방사능 표지(☢)와 RADIOACTIVE 문구가 있는지 확인하세요. 생물학적 위험 표지가 있는 의료폐기물 봉투와 다릅니다.":"귀 닦는 방법 (젖은 수건으로 닦기 · 면봉 사용)"}</small></details>`:""}<span class="tm"></span></div>${t==="방사선안전관리자에게 연락"?`<button class="rbtn">보고하기</button>`:""}</li>`).join("")}</ol></div>`;
+ tips.forEach(([id,tp])=>{const nn=NUC[id];h+=`<div class="blk tipb"><h3><span class="lab" style="background:var(--amber)">참고</span>${id==="unk"?"물질을 모를 때":nn.t+" 주의할 점"}</h3><b>${tp[0]}</b><p>${tp[1]}</p></div>`;});
+ h+=`<div class="blk"><h3><span class="lab" style="background:var(--red)">금지</span>하지 마세요</h3><ul class="dn">${dn.map(t=>`<li><div><b>${t}</b></div></li>`).join("")}</ul></div>`;
+  h+=`<div class="again"><button id="fixQ">← 되돌아가기</button><button id="toHome">홈으로</button></div>`;
+ $("rBody").innerHTML=h;
+ $("rBody").querySelectorAll("details.fig").forEach(x=>x.onclick=e=>e.stopPropagation());
+ $("rBody").querySelectorAll("details.fig").forEach(x=>x.onclick=e=>e.stopPropagation());
+ $("rBody").querySelectorAll(".rbtn").forEach(b=>b.onclick=e=>{e.stopPropagation();showReport();});
+ $("rBody").querySelectorAll("ol.st li[data-i]").forEach(li=>li.onclick=()=>{
+  li.classList.toggle("done"); const on=li.classList.contains("done"); doneSet[li.dataset.i]=on?hm(new Date()):null; li.querySelector(".tm").textContent=on?"✓ "+doneSet[li.dataset.i]+" 완료":"";
+  const c=Object.values(doneSet).filter(Boolean).length; $("cnt").textContent=`${c}/${total}`; $("fl").style.width=(c/total*100)+"%";
+ });
+ lastL=L; lastR=r;
+ $("toHome").onclick=()=>leaveResult(()=>go("home"));
+ $("v-result").querySelector(".bk").onclick=()=>leaveResult(()=>go("home"));
+ $("fixQ").onclick=()=>{show("quiz");qi=activeQs().length-1;renderQ();};
+ show("result");
+}
+let lastL=[],lastR=null,reportedAt=null,memo="",rpt={people:"",hurtN:"",preg:""};
+function rsoIdx(){return lastL.findIndex(x=>x[0]==="방사선안전관리자에게 연락");}
+function markDone(i,tm){const li=$("rBody").querySelector(`ol.st li[data-i="${i}"]`);if(!li)return;li.classList.add("done");doneSet[i]=tm;li.querySelector(".tm").textContent="✓ "+tm+" 보고함";const c=Object.values(doneSet).filter(Boolean).length;$("cnt").textContent=`${c}/${lastL.length}`;$("fl").style.width=(c/lastL.length*100)+"%";}
+function hm(d){return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+function itemLabel(x){return x[3]?"["+x[3]+"] "+x[0]:x[0];}
+const PAST={"응급처치·119가 먼저":"응급처치하고 119에 신고함","주변에 알리고 접근 막기":"주변에 알리고 접근을 막음","흡수지로 덮기만 (치우지 않기)":"흡수지로 덮음, 치우지는 않음","흡수지로 덮기":"흡수지로 덮음","흄후드는 켠 채로, 현장 비우기":"흄후드는 켜 둔 채 현장을 비움","깨진 선원·포장물에서 떨어지고, 만지거나 옮기지 않기":"깨진 선원·포장물에서 떨어짐, 만지거나 옮기지 않음","선원·포장물을 만진 사람은 그 자리에서 측정받기":"선원·포장물을 만진 사람이 그 자리에서 측정받음","깨진 선원·포장물은 만지거나 옮기지 않기":"깨진 선원·포장물은 그대로 둠","벗어서 방사성폐기물 봉투에 넣고 밀봉하기":"벗어서 방사성폐기물 봉투에 밀봉함","씻기 전에 방수 밴드로 덮기":"방수 밴드로 덮음","미지근한 물과 순한 비누로 살살 씻기":"미지근한 물과 순한 비누로 씻음","코를 풀고, 젖은 수건이나 물티슈로 눈꺼풀·귀 닦기":"코를 풀고 눈꺼풀·귀를 닦음","오염됐을 수 있다고 보고 측정받기":"측정받음","먹거나 마시지 말고 체내 측정 기다리기":"먹거나 마시지 않고 체내 측정을 기다림","오염 제거 작업을 맡지 않기":"오염 제거 작업에서 뺌","측정 전까지 아무도 이동 금지":"측정 전까지 아무도 이동하지 않음","장갑 끼고 바깥 → 가운데로 정리":"장갑 끼고 바깥에서 가운데로 정리함"};
+function pastLabel(x){const t=PAST[x[0]]||x[0];return x[3]?"["+x[3]+"] "+t:t;}
+function left(){return lastL.map((x,i)=>[x,i]).filter(([,i])=>!doneSet[i]).map(([x])=>itemLabel(x));}
+function modal(html){$("mdlBox").innerHTML=html;$("mdl").classList.add("on");}
+function closeModal(){$("mdl").classList.remove("on");}
+$("mdl").onclick=e=>{if(e.target.id==="mdl")closeModal();};
+function leaveResult(fn){
+ const l=left(); if(!l.length){fn();return;}
+ modal(`<h3>남은 조치 ${l.length}가지</h3><ul>${l.map(t=>`<li>${t}</li>`).join("")}</ul><div class="bt"><button class="pri" id="mStay">돌아가서 확인</button><button id="mGo">그래도 나가기</button></div>`);
+ $("mStay").onclick=closeModal; $("mGo").onclick=()=>{closeModal();fn();};
+}
+function lab(k,v){const q=QS.find(x=>x.k===k)||{};const o=(q.o||[]).concat(q.extra?q.extra.o:[]).find(x=>x[0]===v);return o?o[2]:v;}
+function reportText(){
+ const a=ans,r=lastR,T={major:"대량 유출로 대응",minor:"소량 유출로 대응",sealed:"선원·포장물 파손 대응"};
+ const body=(a.body||[]).map(v=>lab("body",v)).join(", ")||"-";
+ const who=(a.who||[]).map(v=>lab("body",v)).join(", ");
+ const ri=rsoIdx();
+ const done=lastL.map((x,i)=>[pastLabel(x),doneSet[i],i]).filter(x=>x[1]&&x[2]!==ri);
+ const l=left().filter(x=>x!=="방사선안전관리자에게 연락");
+ let t="[방사성물질 유출 보고]\n";
+ const sd=startAt||new Date();
+ t+="사고 발생 시각: "+sd.getFullYear()+"년 "+(sd.getMonth()+1)+"월 "+sd.getDate()+"일("+WD[sd.getDay()]+") "+hm(sd)+"\n";
+ t+="물질: "+(a.nuc==="mix"?"여러 물질 섞임 ("+(a.mix||[]).map(id=>NUC[id].t).join(", ")+")":r.n.t==="모름"?"미확인":r.n.t+" ("+r.n.ko+")")+"\n";
+ t+="상황: "+((a.forms&&a.forms.length)?a.forms.map(v=>lab("form",v)).join(", "):lab("form",a.form))+"\n";
+ const hi=lastL.findIndex(x=>x[0]==="응급처치·119가 먼저");
+ t+="생명이 위험한 부상자: "+(a.hurt==="yes"?(rpt.hurtN?rpt.hurtN+"명":"있음 (인원 미입력)")+" · 응급처치·119: "+(hi>=0&&doneSet[hi]?"완료 ("+doneSet[hi]+")":"아직 체크 안 함"):"없음")+"\n";
+ t+="현장에 있던 사람: "+(rpt.people?rpt.people+"명":"미입력")+((a.who||[]).includes("preg")?" · 임신한 사람 "+(rpt.preg?rpt.preg+"명":"있음 (인원 미입력)"):"")+"\n";
+ t+="사람 오염: "+body+"\n";
+ t+="판정: "+T[r.type]+"\n";
+ t+="\n■ 완료한 조치\n"+(done.length?done.map(([x,tm])=>"- "+x+" ("+tm+")").join("\n"):"- 없음")+"\n";
+ t+="\n■ 남은 조치\n"+(l.length?l.map(x=>"- "+x).join("\n"):"- 없음");
+ if(memo.trim()) t+="\n\n추가 메모\n"+memo.trim();
+ return t;
+}
+function rsoNum(){return load("rso").replace(/[^0-9+]/g,"");}
+function showReport(){
+ const num=rsoNum();
+ modal(`<h3>보고 내용</h3><p class="note">아래 내용이 방사선안전관리자에게 보고됩니다.</p><div class="cnts"><label>현장에 있던 사람 <input id="rpPeople" type="tel" inputmode="numeric" placeholder="0">명</label>${ans.hurt==="yes"?`<label>위독한 부상자 <input id="rpHurt" type="tel" inputmode="numeric" placeholder="0">명</label>`:""}${(ans.who||[]).includes("preg")?`<label>임신한 사람 <input id="rpPreg" type="tel" inputmode="numeric" placeholder="0">명</label>`:""}</div><pre id="rptTxt"></pre><textarea id="memo" placeholder="추가 메모 (선택)"></textarea><div class="bt3">${num?`<button class="pri" id="mSend">방사선안전관리자에게 보고하기</button>`:`<button class="pri" id="mSet">방사선안전관리자 번호 먼저 설정</button>`}<button id="mClose">닫기</button></div>`);
+ const upd=()=>{$("rptTxt").textContent=reportText();};
+ $("memo").value=memo; upd();
+ const num2=(id,key)=>{const el=$(id);if(!el)return;el.value=rpt[key];el.oninput=()=>{el.value=el.value.replace(/[^0-9]/g,"").slice(0,3);rpt[key]=el.value;upd();};};
+ num2("rpPeople","people");num2("rpHurt","hurtN");num2("rpPreg","preg");
+ $("memo").oninput=()=>{memo=$("memo").value;upd();};
+ $("mClose").onclick=closeModal;
+ if($("mSet")) $("mSet").onclick=()=>{closeModal();openSet(()=>{show("result");showReport();});};
+ if($("mSend")) $("mSend").onclick=confirmSend;
+}
+function confirmSend(){
+ modal(`<h3>보고할까요?</h3><p class="note">방사선안전관리자(${load("rso")})에게 보고 내용을 문자로 보냅니다.</p><div class="bt"><button class="pri" id="mOk">보고하기</button><button id="mBack">취소</button></div>`);
+ $("mBack").onclick=showReport;
+ $("mOk").onclick=()=>{closeModal();openMsgs(reportText());};
+}
+function ampm(d){const h=d.getHours(),m=String(d.getMinutes()).padStart(2,"0");return (h<12?"오전 ":"오후 ")+((h%12)||12)+":"+m;}
+const WD="일월화수목금토";
+let thread=[]; try{thread=JSON.parse(load("thread")||"[]");}catch(e){thread=[];}
+function saveThread(){save("thread",JSON.stringify(thread));}
+let msgMode="app", sentAt=null;
+function dateLabel(d){return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${WD[d.getDay()]}요일`;}
+function renderThread(){
+ let h="",last="";
+ thread.forEach((m,i)=>{const d=new Date(m.d),dl=dateLabel(d);if(dl!==last){h+=`<div class="dt">${dl}</div>`;last=dl;}
+  h+=(m.img?`<img class="mimg" src="${m.img}" alt="보낸 사진">`:`<div class="bub" data-i="${i}"></div>`)+`<div class="st">${m.s==="sending"?"전송 중…":ampm(d)+" · 전송됨"}</div>`;});
+ $("msgBody").innerHTML=h;
+ $("msgBody").querySelectorAll(".bub").forEach(b=>b.textContent=thread[b.dataset.i].t);
+ $("msgBody").scrollTop=$("msgBody").scrollHeight;
+}
+function pushMsg(t,after,img){
+ const m={t,d:Date.now(),s:"sending"};if(img)m.img=img;thread.push(m);renderThread();
+ setTimeout(()=>{m.s="sent";m.d=Date.now();saveThread();renderThread();if(after)after();},800);
+}
+function openThread(mode){
+ msgMode=mode; $("msgNum").textContent=load("rso")||"번호 없음"; $("sbTime2").textContent=hm(new Date());
+ renderThread(); $("msgs").classList.add("on");
+}
+function openMsgs(text){openThread("app");sentAt=null;pushMsg(text,()=>{sentAt=hm(new Date());});}
+$("msgBack").onclick=()=>{
+ $("msgs").classList.remove("on");
+ if(msgMode==="launcher"){openList();return;}
+ if(!sentAt){showReport();return;}
+ reportedAt=sentAt;sentAt=null;const i=rsoIdx();if(i>=0)markDone(i,reportedAt);
+ const rb=$("rBody").querySelector(".rbtn");if(rb)rb.textContent="다시 보고";
+ modal(`<h3>✓ 보고되었습니다</h3><p class="note">${reportedAt} 방사선안전관리자에게 보고 문자를 보냈습니다.</p><div class="bt3"><button class="pri" id="mDone">확인</button></div>`);
+ $("mDone").onclick=closeModal;
+};
+function sendExtra(){const v=$("msgIn").value.trim();if(!v)return;$("msgIn").value="";$("msgSend").classList.remove("on");pushMsg(v);}
+$("msgIn").oninput=()=>$("msgSend").classList.toggle("on",!!$("msgIn").value.trim());
+$("msgIn").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendExtra();}};
+$("msgSend").onclick=sendExtra;
+let pickCb=null;
+$("msgPlus").onclick=()=>{
+ modal(`<h3>사진 보내기</h3>${photos.length?`<div class="pick">${photos.map((u,i)=>`<img src="${u}" data-i="${i}" alt="사진 ${i+1}">`).join("")}</div>`:`<p class="note">갤러리에 사진이 없습니다.</p>`}<div class="bt3"><button class="pri" id="pkCam">카메라로 찍기</button><button id="pkGal">휴대폰에서 사진 가져오기</button><button id="pkNo">취소</button></div>`);
+ $("mdl").style.zIndex=150;
+ const done=u=>{closeModal();$("mdl").style.zIndex="";pushMsg("[사진]",null,u);};
+ document.querySelectorAll("#mdlBox .pick img").forEach(im=>im.onclick=()=>done(photos[+im.dataset.i]));
+ $("pkNo").onclick=()=>{closeModal();$("mdl").style.zIndex="";};
+ $("pkCam").onclick=()=>{pickCb=u=>{addPhoto(u);done(u);};$("fCam").click();};
+ $("pkGal").onclick=()=>{pickCb=u=>{addPhoto(u);done(u);};$("fGal").click();};
+};
+$("msgCall").onclick=()=>{const n=load("rso");if(n)startCall(n);};
+// ===== 메시지 목록 =====
+function openList(){
+ document.querySelectorAll(".sbt").forEach(x=>x.textContent=hm(new Date()));
+ if(!thread.length){$("mlistBody").innerHTML=`<div class="mempty">대화가 없습니다</div>`;}
+ else{const m=thread[thread.length-1],d=new Date(m.d);
+  $("mlistBody").innerHTML=`<button class="mli" id="mliRso"><span class="av">방</span><span style="min-width:0"><b>방사선안전관리자</b><small id="mliPrev"></small></span><span class="tt">${ampm(d)}</span></button>`;
+  $("mliPrev").textContent=m.img?"사진":m.t.replace(/\n/g," ");
+  $("mliRso").onclick=()=>{$("mlist").classList.remove("on");openThread("launcher");};}
+ $("mlist").classList.add("on");
+}
+$("dkMsg").onclick=()=>{$("navbar").classList.remove("dk");openList();};
+// ===== 전화 (키패드·통화) =====
+const KEYS=[["1",""],["2","ABC"],["3","DEF"],["4","GHI"],["5","JKL"],["6","MNO"],["7","PQRS"],["8","TUV"],["9","WXYZ"],["*",""],["0","+"],["#",""]];
+$("kp").innerHTML=KEYS.map(([k,l])=>`<button data-k="${k}">${k}<small>${l}</small></button>`).join("");
+let dial="";
+function digits(x){return (x||"").replace(/[^0-9+*#]/g,"");}
+function nameOf(n){const d=digits(n);if(d==="119")return "119 긴급신고";if(d&&d===digits(load("rso")))return "방사선안전관리자";return "";}
+function fmt(d){if(/^01\d{9}$/.test(d))return d.slice(0,3)+"-"+d.slice(3,7)+"-"+d.slice(7);if(/^01\d{8}$/.test(d))return d.slice(0,3)+"-"+d.slice(3,6)+"-"+d.slice(6);if(/^02\d{7,8}$/.test(d))return d.slice(0,2)+"-"+d.slice(2,d.length-4)+"-"+d.slice(-4);if(/^0[3-9]\d{7,9}$/.test(d)){const r=d.slice(3);return d.slice(0,3)+"-"+(r.length<=6?r.slice(0,3)+"-"+r.slice(3):r.slice(0,r.length-4)+"-"+r.slice(-4));}return d;}
+function renderDial(){
+ $("dNum").textContent=fmt(dial); $("dName").textContent=nameOf(dial);
+ const r=load("rso"); $("dSug").textContent=(!dial&&r)?`방사선안전관리자  ${r}`:"";
+}
+$("kp").onclick=e=>{const b=e.target.closest("button");if(!b)return;dial+=b.dataset.k;renderDial();};
+$("dDel").onclick=()=>{dial=dial.slice(0,-1);renderDial();};
+$("dSug").onclick=()=>{dial=digits(load("rso"));renderDial();};
+$("dCall").onclick=()=>{if(dial)startCall(fmt(dial));};
+function openDialer(){document.querySelectorAll(".sbt").forEach(x=>x.textContent=hm(new Date()));dial="";renderDial();$("dialer").classList.add("on");}
+$("dkPhone").onclick=()=>{$("navbar").classList.remove("dk");openDialer();};
+let callT=null;
+function startCall(n){
+ const nm=nameOf(n);
+ $("cName").textContent=nm||n; $("cNum").textContent=nm?n:""; $("cAv").textContent=digits(n)==="119"?"119":(nm?nm[0]:"☎");$("cAv").style.fontSize=digits(n)==="119"?"28px":"";
+ $("cSt").textContent="전화 거는 중…"; $("call").classList.add("on");
+ document.querySelectorAll(".sbt").forEach(x=>x.textContent=hm(new Date()));
+ clearInterval(callT); let sec=0;
+ callT=setTimeout(()=>{callT=setInterval(()=>{sec++;$("cSt").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");},1000);},2000);
+}
+function endCall(){clearTimeout(callT);clearInterval(callT);$("call").classList.remove("on");}
+$("cEnd").onclick=endCall;
+document.querySelector(".callbar .c119").onclick=e=>{e.preventDefault();startCall("119");};
+
+// ===== 캘린더 =====
+let calY,calM;
+function renderCal(){
+ const now=new Date(),first=new Date(calY,calM,1),days=new Date(calY,calM+1,0).getDate();
+ $("calTitle").textContent=`${calY}년 ${calM+1}월`;
+ let h="";for(let i=0;i<first.getDay();i++)h+="<div></div>";
+ for(let d=1;d<=days;d++){const w=(first.getDay()+d-1)%7,td=now.getFullYear()===calY&&now.getMonth()===calM&&now.getDate()===d;
+  h+=`<div class="${w===0?"sun":w===6?"sat":""} ${td?"td":""}"><span>${d}</span></div>`;}
+ $("calGrid").innerHTML=h;
+ $("calToday").innerHTML=`<b>오늘 · ${now.getMonth()+1}월 ${now.getDate()}일 ${WD[now.getDay()]}요일</b><small>현재 시각 ${ampm(now)} · 일정 없음</small>`;
+}
+$("icCal").onclick=()=>{const n=new Date();calY=n.getFullYear();calM=n.getMonth();renderCal();stamp();$("navbar").classList.remove("dk");$("calApp").classList.add("on");};
+$("calPrev").onclick=()=>{calM--;if(calM<0){calM=11;calY--;}renderCal();};
+$("calNext").onclick=()=>{calM++;if(calM>11){calM=0;calY++;}renderCal();};
+// ===== 사진 (카메라·갤러리) =====
+let photos=[]; try{photos=JSON.parse(load("photos")||"[]");}catch(e){photos=[];}
+function savePhotos(){try{localStorage.setItem("photos",JSON.stringify(photos));}catch(e){}}
+function addPhoto(url){photos.unshift(url);savePhotos();$("camThumb").style.backgroundImage=`url(${url})`;}
+function shrink(src,cb){const im=new Image();im.onload=()=>{const k=Math.min(1,720/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.7));};im.src=src;}
+function fileTo(f,cb){if(!f)return;const r=new FileReader();r.onload=()=>shrink(r.result,cb);r.readAsDataURL(f);}
+function renderGal(){
+ $("galGrid").innerHTML=photos.length?photos.map((u,i)=>`<img src="${u}" data-i="${i}" alt="사진 ${i+1}">`).join(""):`<div class="galempty">사진이 없습니다</div>`;
+ $("galGrid").querySelectorAll("img").forEach(im=>im.onclick=()=>{viewIdx=+im.dataset.i;$("photoImg").src=im.src;$("photoV").classList.add("on");});
+}
+let viewIdx=-1;
+$("photoX").onclick=()=>$("photoV").classList.remove("on");
+$("photoDel").onclick=()=>{
+ modal(`<h3>사진을 삭제할까요?</h3><p class="note">갤러리에서 지워집니다.</p><div class="bt"><button class="pri" id="mDelOk" style="background:var(--red);border-color:var(--red)">삭제</button><button id="mDelNo">취소</button></div>`);
+ $("mdl").style.zIndex=150;
+ $("mDelNo").onclick=()=>{closeModal();$("mdl").style.zIndex="";};
+ $("mDelOk").onclick=()=>{if(viewIdx>=0){photos.splice(viewIdx,1);savePhotos();}closeModal();$("mdl").style.zIndex="";$("photoV").classList.remove("on");renderGal();$("camThumb").style.backgroundImage=photos[0]?`url(${photos[0]})`:"";};
+};
+$("icGal").onclick=()=>{renderGal();stamp();$("navbar").classList.remove("dk");$("galApp").classList.add("on");};
+$("galAdd").onclick=()=>$("fGal").click();
+$("fGal").onchange=e=>{const cb=pickCb;pickCb=null;fileTo(e.target.files[0],u=>{if(cb)cb(u);else{addPhoto(u);renderGal();}});e.target.value="";};
+$("fCam").onchange=e=>{const cb=pickCb;pickCb=null;fileTo(e.target.files[0],u=>{if(cb)cb(u);else addPhoto(u);});e.target.value="";};
+let camStream=null;
+async function openCam(){
+ $("navbar").classList.remove("dk");$("camApp").classList.add("on");$("camFb").classList.remove("on");$("camV").style.display="";
+ if(photos[0])$("camThumb").style.backgroundImage=`url(${photos[0]})`;
+ try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});$("camV").srcObject=camStream;}
+ catch(e){$("camV").style.display="none";$("camFb").classList.add("on");}
+}
+function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}$("camApp").classList.remove("on");}
+$("dkCam").onclick=openCam;
+$("camPick").onclick=()=>$("fCam").click();
+$("camShut").onclick=()=>{
+ const v=$("camV");
+ if(!camStream||!v.videoWidth){$("fCam").click();return;}
+ const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
+ shrink(c.toDataURL("image/jpeg",.9),addPhoto);
+ const f=$("camFlash");f.style.opacity="1";setTimeout(()=>f.style.opacity="0",120);
+};
+$("camThumb").onclick=()=>{stopCam();renderGal();$("galApp").classList.add("on");};
+function stamp(){document.querySelectorAll(".sbt").forEach(x=>x.textContent=hm(new Date()));}
+// ===== 하단 내비게이션 (홈·뒤로) =====
+function onLauncher(){return $("launcher").style.display!=="none";}
+function closeOverlays(){["msgs","mlist","dialer","calApp","galApp","photoV"].forEach(id=>$(id).classList.remove("on"));stopCam();endCall();}
+function showLauncher(){closeOverlays();closeModal();$("launcher").style.display="";$("navbar").classList.add("dk");document.body.classList.add("home");window.scrollTo(0,0);}
+$("nvHome").onclick=showLauncher;
+$("nvRecent").onclick=()=>{};
+$("nvBack").onclick=()=>{
+ if($("call").classList.contains("on")){endCall();return;}
+ if($("msgs").classList.contains("on")){$("msgBack").click();return;}
+ if($("photoV").classList.contains("on")){$("photoV").classList.remove("on");return;}
+ if(["mlist","dialer","calApp","galApp","camApp"].some(id=>$(id).classList.contains("on"))){showLauncher();return;}
+ if($("splash").classList.contains("on")||onLauncher())return;
+ if($("mdl").classList.contains("on")){closeModal();return;}
+ const v=(document.querySelector(".view.on")||{}).id;
+ if(v==="v-result"){$("v-result").querySelector(".bk").click();return;}
+ if(v==="v-quiz"){$("qBack").click();return;}
+ if(v==="v-home"){showLauncher();return;}
+ if(v==="v-set"){leaveSet();return;}
+ go("home");
+};
+// 실시간 시계
+function tick(){const d=new Date(),t=hm(d);
+ ["sbTime","lkTime","sbTime2"].forEach(id=>{const e=$(id);if(e)e.textContent=t;});
+ document.querySelectorAll(".sbt").forEach(x=>x.textContent=t);
+ const ld=$("lkDate");if(ld)ld.textContent=`${d.getMonth()+1}월 ${d.getDate()}일 ${WD[d.getDay()]}요일`;}
+tick();setInterval(tick,5000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});
+// 휴대폰 홈 화면 → 스플래시 → 앱
+(function(){
+ const d=new Date();
+ $("sbTime").textContent=hm(d);$("lkTime").textContent=hm(d);
+ $("lkDate").textContent=`${d.getMonth()+1}월 ${d.getDate()}일 ${"일월화수목금토"[d.getDay()]}요일`;
+ $("openApp").onclick=()=>{
+  const sp=$("splash");sp.style.opacity="1";sp.classList.add("on");$("launcher").style.display="none";$("navbar").classList.remove("dk");closeOverlays();document.body.classList.remove("home");
+  setTimeout(()=>{sp.style.opacity="0";setTimeout(()=>{sp.classList.remove("on");},450);},1300);
+ };
+})();
+function dedupe(a){const s=new Set();return a.filter(([t])=>s.has(t)?false:(s.add(t),true));}
+
+// ============================ 학습 화면 ============================
+function renderNuc(){
+ $("nucBody").innerHTML=ALL.filter(id=>id!=="unk").map(id=>{const n=NUC[id];return `<div class="card"><h3>${n.t}</h3><div class="ko">${n.ko}</div><dl><dt>반감기</dt><dd>${n.half}</dd><dt>방사선</dt><dd>${n.ray}</dd><dt>차폐</dt><dd>${n.shield}</dd><dt>측정</dt><dd>${n.detect}</dd>${n.nrc?`<dt>대량 기준</dt><dd>${n.nrc} 초과</dd>`:""}</dl><ul>${nucExtra(id).filter(x=>!x[0].startsWith("대량")).map(([t,d])=>`<li><b style="display:block">${t}</b>${d}</li>`).join("")}</ul></div>`}).join("");
+}
+const FAQ=[
+ ["옷만 벗어도 효과가 있나요?",["겉옷을 벗으면 방사성물질을 최대 90%까지 없앨 수 있습니다.","먼지가 털리지 않게 조심해서 벗습니다.","벗은 옷은 밀봉해 사람이 없는 곳에 둡니다."]],
+ ["뜨거운 물로 씻으면 더 잘 지워지나요?",["아니요. 미지근한 물을 씁니다.","뜨거운 물은 흡수를 늘리고 화상 위험이 있습니다.","찬물은 모공을 닫아 오염을 가둡니다."]],
+ ["피부 오염을 끝까지 다 지워야 하나요?",["모두 지우는 것은 불가능하거나 바람직하지 않을 수 있습니다.","배경의 2배 이하이거나 더 줄지 않으면 멈춥니다.","피부 바깥층은 12~15일 동안 자연히 떨어져 나갑니다."]],
+ ["오염된 사람을 응급처치해도 되나요?",["네. 생명을 위협하는 부상은 오염 제거보다 안정화가 먼저입니다.","오염된 환자라도 돕는 사람에게 큰 위험이 될 가능성은 매우 낮습니다.","가능하면 방수 장갑과 마스크를 씁니다."]],
+ ["조금과 많이의 기준은?",["사람이 오염됐거나 휘발성 물질이 나오면 대량입니다.","양 기준은 핵종마다 다릅니다 (예: I-131 1 mCi, Tc-99m 100 mCi).","소량 절차로 부족하면 대량 절차를 따릅니다."]],
+ ["측정기 소리가 안 나면 안전한가요?",["항상 그렇지는 않습니다.","H-3는 휴대용 측정기로 대체로 검출되지 않습니다.","스미어 시료를 액체섬광계수기로 측정합니다."]],
+ ["P-32는 납으로 막으면 되나요?",["납은 고에너지 베타선 차폐에 적절하지 않을 수 있습니다.","플라스틱(아크릴)을 먼저 씁니다.","P-32의 베타선은 플라스틱 약 6.8 mm에서 멈춥니다."]],
+ ["반감기가 짧으면 기다려도 되나요?",["일부 단반감기 핵종은 붕괴할 때까지 출입을 막고 기다리는 것이 최선일 수 있습니다.","결정은 방사선안전관리자가 합니다.","기다리는 동안 출입 통제는 유지합니다."]],
+ ["흄후드 안에서 쏟으면 끄고 나와야 하나요?",["아니요. 흄후드는 켜 둡니다.","휘발성 물질이 옆 방이나 복도로 나가는 것을 줄여 줍니다.","방사선안전관리자에게 바로 알립니다."]],
+ ["요오드는 왜 따로 주의하나요?",["휘발성 요오드는 체내 측정 기준이 따로 정해져 있습니다.","요오드를 다룬 사람은 갑상선 측정 대상이 될 수 있습니다.","휘발성 물질 대응을 함께 따릅니다."]],
+ ["요오드 유출이면 요오드화칼륨(KI)을 바로 먹어야 하나요?",["아니요. 스스로 판단해 먹지 않습니다.","보건·비상관리 당국이나 의사가 권고할 때만 복용합니다.","요오드를 다룬 사람은 갑상선 측정 대상이 될 수 있으니 담당자에게 알립니다."]],
+ ["사고 나면 환기를 끄고 나와야 하나요?",["실험실 흄후드는 켜 둡니다.","휘발성 물질이 옆 방이나 복도로 퍼지는 것을 줄여 줍니다.","건물 환기 조작은 방사선안전관리자 지시를 따릅니다."]],
+ ["몸에 묻은 게 다 지워졌는지는 어떻게 판단하나요?",["측정해서 판단하며, 판단은 방사선안전관리자가 합니다.","관리구역에서 나갈 때는 몸·옷·신발 표면의 오염도가 허용표면오염도의 1/10을 넘지 않아야 합니다.","알파선을 내지 않는 물질의 허용표면오염도는 4 Bq/cm²이므로, 나갈 때 기준은 0.4 Bq/cm²입니다 (원자력안전법·원안위 고시)."]],
+ ["씻을 때 아무 비누나 써도 되나요?",["순한 중성 비누를 미지근한 물에 풀어 씁니다.","문지르거나 긁지 않습니다.","씻는 동안 눈과 입은 감습니다."]],
+ ["도우러 들어갈 때 무엇을 챙기나요?",["가능하면 방수 장갑과 먼지 마스크를 씁니다.","개인선량계는 보호복 바깥에 단단히 답니다.","오염 구역을 나올 때 겉옷을 벗고 측정받습니다."]],
+ ["장갑을 끼면 다 막아 주나요?",["아닙니다. H-3(삼중수소)는 일반 라텍스·니트릴 장갑을 통과합니다.","피부로도 흡수됩니다.","장갑을 꼈어도 손을 측정받습니다."]],
+ ["머리 감을 때 린스를 써도 되나요?",["아니요. 린스는 방사성물질이 머리카락에 달라붙게 합니다.","샴푸나 비누로 감습니다.","피부를 데우거나 문지르거나 긁지 않습니다."]],
+ ["임신 중이면 어떻게 하나요?",["태아는 방사선에 민감합니다.","임신이 확인된 작업종사자는 출산 때까지 하복부 선량한도가 2 mSv로 따로 정해져 있습니다 (원자력안전법).","임신한 사람은 제염 업무 대신 다른 업무를 맡습니다.","제염 구역에서 일하지 않습니다."]],
+];
+function renderFaq(){$("faqBody").innerHTML=FAQ.map(([q,a])=>`<details class="faq"><summary><b>Q</b>${q}</summary><ol>${a.map(x=>`<li>${x}</li>`).join("")}</ol></details>`).join("");}
+const SRC=[
+ ["캐나다 원자력안전위원회(CNSC) 유출 절차 포스터","https://www.uwindsor.ca/chemical-control-centre/sites/uwindsor.ca.chemical-control-centre/files/spill_procedures.pdf"],
+ ["CNSC 핵종 정보 책자","https://www.cnsc-ccsn.gc.ca/eng/resources/radiation/radiation-safety-data-sheets/"],
+ ["CNSC Am-241 안전 자료 (밀봉선원 원격 취급)","https://bac-lac.wayback.archive-it.org/web/20061029054006/http://www.cnsc.gc.ca/eng/safety/pdf/Am-241.pdf"],
+ ["미국 원자력규제위원회(NRC) 비상절차 모델·핵종별 기준표","https://www.nrc.gov/docs/ML0827/ML082750235.pdf"],
+ ["NRC 규제지침 8.20 방사성 요오드 바이오어세이","https://forms.nrc.gov/docs/ML1406/ML14064A060.pdf"],
+ ["CDC 방사선 비상 스스로 제염하기","https://cdc.gov/radiation-emergencies/prevention/self-decontaminate.html"],
+ ["CDC 제염 인포그래픽","https://www.cdc.gov/nceh/multimedia/infographics/decontamination.html"],
+ ["CDC 병원 의료진 방사선 비상 교육","https://www.cdc.gov/radiation-emergencies/hcp/training/just-in-time.html"],
+ ["CDC 의료진 포켓 가이드 (보관본)","https://webarchive.library.unt.edu/web/20090130184408/http://www.bt.cdc.gov/radiation/pdf/clinicianpocketguide.pdf"],
+ ["미국 보건복지부 REMM 제염 절차 (보관본)","https://webarchive.library.unt.edu/web/20201218003307mp_/https:/www.remm.nlm.gov/ext_contamination.htm"],
+ ["REMM 제염 절차 (2009 보관본)","https://webarchive.library.unt.edu/eot2008/20090130184902/http:/remm.nlm.nih.gov/ext_contamination.htm"],
+ ["REMM 제염 절차 (2013 보관본)","https://webarchive.library.unt.edu/web/20130213211830/http:/www.remm.nlm.gov/ext_contamination.htm"],
+ ["영국 정부 제염 안내","https://www.gov.uk/government/publications/radiation-emergencies-information-for-the-public/how-to-remove-radioactive-material-from-your-skin-and-clothes-self-decontamination-guidance"],
+ ["영국 정부 제염 안내 (쉬운 글)","https://assets.publishing.service.gov.uk/media/65670ab3d6ad75001302fc6d/How_to_remove_radioactive_material_from_your_skin_and_clothes__decontamination__-_EASY_READ-2.pdf"],
+ ["WHO 방사선 비상 스스로 제염","https://cdn.who.int/media/docs/default-source/radiation/2_decontamination_final.pdf"],
+ ["CDC 요오드화칼륨(KI) 안내 (보관본)","https://webarchive.library.unt.edu/web/20090130232113/http://www.bt.cdc.gov/radiation/ki.asp"],
+ ["REMM 제염 절차 (2009 보관본, 대응자 선량계)","https://webarchive.library.unt.edu/eot2008/20090130194913/http:/remm.nlm.nih.gov/ext_contamination.htm"],
+ ["IAEA 초동대응자 보호 지침","https://www-pub.iaea.org/MTCD/Publications/PDF/EPR-First_Res-PDA/html/qg-ppg.htm"],
+ ["원자력안전위원회 고시 「방사선방호 등에 관한 기준」 — 허용표면오염도(제5조), 임신 작업종사자 선량한도(제4조)","https://www.law.go.kr/행정규칙/방사선방호등에관한기준"],
+ ["「방사선 안전관리 등의 기술기준에 관한 규칙」 — 방사선관리구역 퇴거 시 허용표면오염도의 1/10 기준(제3조), 오염검사실","https://www.law.go.kr/법령/방사선안전관리등의기술기준에관한규칙"],
+ ["CDC 스스로 제염 안내 (쓴 휴지·수건은 비닐봉지에)","https://www.cdc.gov/nceh/radiation/emergencies/selfdecon_wash.htm"],
+ ["WHO 스스로 제염 (상처는 덮어 두기)","https://cdn.who.int/media/docs/default-source/radiation/2_decontamination_final.pdf"],
+ ["미국 국토안보부(DHS) 파손 포장물 대응","https://cdp.dhs.gov/shared/se/courses/default/AWR-923-W%2005122021%201.2-20210512144644/groups/222.html"],
+];
+$("srcList").innerHTML=SRC.map(([t,u])=>`<li><b>${t}</b>${u?`<br><a href="${u}" target="_blank" rel="noopener">${u}</a>`:""}</li>`).join("");
+
+// ============================ 공통 ============================
+function $(id){return document.getElementById(id)}
+function load(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
+function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function show(v){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));window.scrollTo(0,0);}
+let startAt=null;
+function startQuiz(){for(const k in ans)delete ans[k];qi=-1;startAt=new Date();show("quiz");renderQ();}
+function go(v){ if(v==="quiz")return startQuiz(); if(v==="nuc")renderNuc(); if(v==="faq")renderFaq(); show(v); }
+function bindGo(root){root.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));}
+bindGo(document);
+function setRso(){let n=load("rso");if(n&&!/-/.test(n)){n=fmt(n.replace(/[^0-9]/g,""));save("rso",n);}$("rsoTxt").textContent=n||"번호를 설정하세요";$("rsoWarn").style.display=n?"none":"block";$("rsoNum").value=n;}
+$("rsoBtn").onclick=e=>{e.preventDefault();if(!load("rso")){const v=(document.querySelector(".view.on")||{}).id;openSet(v&&v!=="v-home"&&v!=="v-set"?()=>show(v.slice(2)):null);return;}startCall(load("rso"));};
+$("rsoNum").addEventListener("input",()=>{const d=$("rsoNum").value.replace(/[^0-9]/g,"").slice(0,11);$("rsoNum").value=fmt(d);});
+let setReturn=null;
+function delNum(){try{localStorage.removeItem("rso");}catch(e){}setRso();$("rsoNum").value="";$("savedMsg").className="ok";$("savedMsg").textContent="번호를 삭제했습니다";setTimeout(()=>$("savedMsg").textContent="",2000);}
+$("delSet").onclick=delNum;
+function openSet(ret){setReturn=ret||null;go("set");}
+function leaveSet(){const r=setReturn;setReturn=null;if(r)r();else go("home");}
+$("v-set").querySelector(".bk").onclick=leaveSet;
+document.querySelectorAll('.view:not(#v-set) [data-go="set"]').forEach(b=>b.onclick=()=>openSet());
+$("saveSet").onclick=()=>{
+ const d=$("rsoNum").value.replace(/[^0-9]/g,"");
+ if(!d){delNum();return;}
+ if(d.length<9){$("savedMsg").className="ok err";$("savedMsg").textContent="전화번호를 숫자로 끝까지 입력하세요";return;}
+ save("rso",fmt(d));setRso();$("savedMsg").className="ok";$("savedMsg").textContent="저장됨";
+ if(setReturn) setTimeout(leaveSet,500); else setTimeout(()=>$("savedMsg").textContent="",2000);
+};
+setRso();
+window.__app={build,ans,NUC,activeQs};
+</script>
+</body>
+</html>
